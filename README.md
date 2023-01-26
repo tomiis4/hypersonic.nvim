@@ -1,2 +1,2 @@
-# theme.vim
-A simple theme for vim
+# Hypersonic.nvim
+A simple plugin
