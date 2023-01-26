@@ -1,2 +1,9 @@
 # Hypersonic.nvim
-A simple plugin
+A simple plugin which help you navigate trough complex projects.
+
+### TODO
+  - [ ] Display in box UI
+      - [ ] TODO
+      - [ ] FIXME
+  - [ ] Navigate to it
+  - [ ] Display all functions
