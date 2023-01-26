@@ -1,9 +1,12 @@
 # Hypersonic.nvim
-A simple plugin which help you navigate trough complex projects.
+A simple plugin which help you with writing and testing Regex with snippets
 
 ### TODO
-  - [ ] Display in box UI
-      - [ ] TODO
-      - [ ] FIXME
-  - [ ] Navigate to it
-  - [ ] Display all functions
+- [ ] Snippets
+    - [ ] Email
+    - [ ] Phone
+    - [ ] URL
+    - [ ] Password strength
+- [ ] Live preview
+    - [ ] Explain
+- [ ]  Autocomplete?
