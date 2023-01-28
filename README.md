@@ -1,5 +1,5 @@
 # Hypersonic.nvim
-A simple open-source plugin which help you with writing and testing Regex with snippets
+A simple open-source plugin which help you with writing and testing Regex.
 
 <hr>
 
@@ -10,7 +10,8 @@ A simple open-source plugin which help you with writing and testing Regex with s
     - [ ] URL
     - [ ] Password strength
 - [ ] Live preview
-    - [ ] Explain 
+    - [ ] Explain
+        - [ ] Split to groups
 - [ ]  Autocomplete?
 
 <hr>
