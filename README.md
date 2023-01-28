@@ -10,8 +10,19 @@ A simple open-source plugin which help you with writing and testing Regex with s
     - [ ] URL
     - [ ] Password strength
 - [ ] Live preview
-    - [ ] Explain
+    - [ ] Explain 
 - [ ]  Autocomplete?
+
+<hr>
+
+### Explaining
+#### <b> Live preview</b>
+- Split regex to groups
+    - `\` - literal characters
+    - ` ` - characters
+    - `()` - groups
+    - `[]` - character class
+- Explain each group using object of regex patterns
 
 <hr>
 
