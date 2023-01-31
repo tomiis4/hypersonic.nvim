@@ -45,17 +45,18 @@ local function split(str)
 
 	-- char
 	for i = 1, #splitLetter(str) do
+		local prevLetter = splitLetter(str)[i-1]
 		local letter = splitLetter(str)[i]
 
-		-- FIXME fix special characters like (, ), ^, ..
-		if letter ~= '\\' and i > 1 and splitLetter(str)[i-1] ~= '\\' then
+		local isChar = string.match(letter, '[a-zA-Z]')
+		local isNotLiteral = letter ~= '\\' and i > 1 and prevLetter ~= '\\'
+		local function prevNotSpecial() if prevLetter ~= '^' and prevLetter ~= '$' and prevLetter then return true else return false end end
+
+		if isNotLiteral and prevNotSpecial() and isChar then
 			table.insert(char, letter)
 		end
 	end
 
-	for key, value in pairs(char) do
-		print(key, value)
-	end
 
 	return {
 		groups, char, charClass, charLiteral
@@ -83,13 +84,12 @@ end
 
 local function explain()
 	local regex = content()
-	local letters = split(regex)
+	local groups = split(regex)
 
-	print(letters)
-
-	-- for i=1, #letters do
-	-- 	print(letters[i])
-	-- end
+	-- explain char literal
+	for _, value in pairs(groups[2]) do
+		print(value)
+	end
 end
 
 return {
