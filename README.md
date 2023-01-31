@@ -23,7 +23,10 @@ A simple open-source plugin which help you with writing and testing Regex.
     - ` ` - characters
     - `()` - groups
     - `[]` - character class
-- Explain each group using object of regex patterns
+- Put it in one multi-dimensional table
+- Recursively loop through table
+- Explant one selection and put explanation in multi-dimensional table
+- Loop trough explanation table and display it.
 
 <hr>
 
