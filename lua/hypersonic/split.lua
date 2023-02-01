@@ -1,7 +1,8 @@
+-- Structure, each {} is group ()
+-- { \n, \n, da, { x,y \b, { \b } }, { \nd } }
 local REGEX_TABLE = {}
 
-
--- CHECK
+-- UILT
 
 -- split string letter by letter
 local function split_by_letter(str)
@@ -19,7 +20,23 @@ local function split_by_letter(str)
 	return letters
 end
 
--- check if is literal characters
+-- Get length of array/table
+-- len( []any ) => int 
+local function len(arr)
+	local i=0
+
+	for _ in pairs(arr) do
+		i = i + 1
+	end
+
+	return i
+end
+
+
+-- CHECK
+
+
+-- check if is literal character
 local function is_literal_character(previous_letter)
 	if previous_letter == '\\' then
 		return true
@@ -71,6 +88,16 @@ end
 -- final function for spliting regex to groups
 local function split(regex)
 	local split_regex = split_by_letter(regex)
+
+	for i=1, len(split_regex) do
+		local letter = split_regex[i]
+		local prevLetter = split_regex[i-1]
+
+		if is_literal_character(prevLetter) then
+			local char = prevLetter..letter
+			table.insert(REGEX_TABLE, char)
+		end
+	end
 
 	-- just for removing warnings
 	print(split_regex())
