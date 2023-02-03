@@ -12,9 +12,9 @@ A simple open-source plugin which help you with writing and testing Regex.
 - [ ] Live preview
     - [ ] Explain
         - [ ] Split to one big table
-            - [ ] Groups
-            - [ ] Characters
-            - [ ] Lit. characters
+            - [x] Groups
+            - [x] Characters
+            - [x] Lit. characters
             - [ ] Class
             - [ ] Anchors
             
