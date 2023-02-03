@@ -197,6 +197,11 @@ local function split(regex)
 end
 
 
-split('xyz(xy)(uy)')
+-- Need fix groups between, it put 2() inside same object
+-- split('xyz(xy)(uy)')
+
+
+-- TESTING
 -- split('hi(match(sh(ws))(x))(sa)')
 -- split('y^([a-zA-Z](x))(*$)ahoj')
+-- split('xyz(pl(sa))')
