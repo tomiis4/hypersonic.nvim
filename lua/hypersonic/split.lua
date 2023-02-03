@@ -4,17 +4,20 @@ local REGEX_TABLE = {}
 
 -- UILT
 
--- print table
-local function print_table(tbl)
-	for _, elem in ipairs(tbl) do
-		if type(elem) == "table" then
-			print_table(elem)
-		else
-			print(elem)
-		end
-	end
-end
 
+-- print table function
+local function print_table(tbl, indent)
+  indent = indent or 0
+  print(string.rep("  ", indent) .. "{")
+  for _, v in pairs(tbl) do
+    if type(v) == "table" then
+      print_table(v, indent + 1)
+    else
+      print(string.rep("  ", indent + 1) .. string.format("%q,", v))
+    end
+  end
+  print(string.rep("  ", indent) .. "},")
+end
 
 -- split string letter by letter
 local function split_by_letter(str)
@@ -45,45 +48,44 @@ local function len(arr)
 end
 
 
--- FUCK THIS SCHEME AND THIS FUNCTION
--- New scheme for append function
--- 	take TABLE, GROUP, VALUE as argument
--- 	loop trough TABLE and each time you find new type=table
--- 		add 1 to some index, if index == GROUP then 
+-- function for append()
+local function find_group(tbl, group, value)
+	local temp_group = tbl
+	local last_elem = temp_group[len(temp_group)]
 
+	-- loop for groups and add new table GROUP times
+	for i=2, group do
+		if type(last_elem) ~= "table" then
+			table.insert(temp_group, {})
+		end
 
+		-- asign temp_group to new group
+		-- and update last element
+		temp_group = temp_group[len(temp_group)]
+		last_elem = temp_group[len(temp_group)]
+	end
 
---	UPDATE, FUCK THIS SHIT TOO
--- FIXME If i make 2 tables, one for chars and second for groups
--- FIXME in chars i will save like { x,y,c, #groupX", {} }
-
+	-- insert element
+	-- if type(last_elem) == "table" then
+		-- table.insert(temp_group, "group: "..group.." "..value)
+		table.insert(temp_group, value)
+	-- else
+	-- 	local temp_elem = {"group: "..group.." "..value}
+		-- local temp_elem = {"TempValue: "..value}
+		-- table.insert(temp_group, temp_elem)
+	-- end
+end
 
 -- Append item to REGEX_TABLE
 -- append( []any, int, any(string))
--- FIXME appending to another group
--- FIXME OPTIONS:
---		- group does not exists
---		- it's saved in copy of variable
 local function append(tbl, group, value)
-	-- if is inserting to main arr
 	if group == 1 then
+ 		-- table.insert(REGEX_TABLE, "group: "..group.." "..value)
 		table.insert(REGEX_TABLE, value)
-		return
+ 		return
 	end
 
-	-- loop trough main arr
-	for _, val in ipairs(tbl) do
-		-- if main have table
-		if type(val) == "table" then
-			group = group - 1
-
-			if group == 1 then
-				table.insert(val, value)
-				return
-			end
-			append(val, group-1, value)
-		end
-	end
+	find_group(tbl, group, value)
 end
 
 
@@ -157,11 +159,11 @@ local function split(regex)
 
 		-- group check
 		-- FIXME
-		-- if is_group('start', letter) then
-		-- 	regex_group = regex_group + 1
-		-- elseif is_group('end', letter) then
-		-- 	regex_group = regex_group - 1
-		-- end
+		if is_group('start', letter) then
+			regex_group = regex_group + 1
+		elseif is_group('end', letter) then
+			regex_group = regex_group - 1
+		end
 
 		-- check for classes
 		if is_class('start', letter) then
@@ -190,14 +192,11 @@ local function split(regex)
 		end
 	end
 
-	-- just for removing warnings
-	-- print(split_regex())
-	-- print(is_group())
-	-- print(is_class())
-	-- print(is_literal_character())
-	-- print(is_character())
+
 	print_table(REGEX_TABLE)
 end
 
 
-split('^([a-zA-Z])(*$)ahoj')
+split('xyz(xy)(uy)')
+-- split('hi(match(sh(ws))(x))(sa)')
+-- split('y^([a-zA-Z](x))(*$)ahoj')
