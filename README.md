@@ -11,7 +11,8 @@ A simple open-source plugin which help you with writing and testing Regex.
     - [ ] Password strength
 - [ ] Live preview
     - [ ] Explain
-        - [ ] Split to groups
+        - [ ] Split to one big table
+            
 - [ ]  Autocomplete?
 
 <hr>
@@ -20,9 +21,10 @@ A simple open-source plugin which help you with writing and testing Regex.
 #### <b> Live preview</b>
 - Split regex to groups
     - `\` - literal characters
-    - ` ` - characters
+    - `x` - characters
     - `()` - groups
     - `[]` - character class
+    - `^` - Anchors
 - Put it in one multi-dimensional table
 - Recursively loop through table
 - Explant one selection and put explanation in multi-dimensional table
