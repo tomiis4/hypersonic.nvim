@@ -2,6 +2,7 @@
 -- { \n, \n, da, { x,y \b, { \b } }, { \nd } }
 local REGEX_TABLE = {}
 
+
 -- UILT
 
 
@@ -47,13 +48,13 @@ local function len(arr)
 	return i
 end
 
-
 -- function for append()
 local function find_group(tbl, group, value)
 	local temp_group = tbl
 	local last_elem = temp_group[len(temp_group)]
 
 	-- loop for groups and add new table GROUP times
+	-- have to be i=2 or group-1 to fix multiple groups
 	for i=2, group do
 		if type(last_elem) ~= "table" then
 			table.insert(temp_group, {})
@@ -66,14 +67,7 @@ local function find_group(tbl, group, value)
 	end
 
 	-- insert element
-	-- if type(last_elem) == "table" then
-		-- table.insert(temp_group, "group: "..group.." "..value)
-		table.insert(temp_group, value)
-	-- else
-	-- 	local temp_elem = {"group: "..group.." "..value}
-		-- local temp_elem = {"TempValue: "..value}
-		-- table.insert(temp_group, temp_elem)
-	-- end
+	table.insert(temp_group, value)
 end
 
 -- Append item to REGEX_TABLE
@@ -156,13 +150,19 @@ local function split(regex)
 	for i=1, len(split_regex) do
 		local letter = split_regex[i]
 		local prev_letter = split_regex[i-1]
+		local future_letter = split_regex[i+1]
 
 		-- group check
-		-- FIXME
 		if is_group('start', letter) then
 			regex_group = regex_group + 1
 		elseif is_group('end', letter) then
 			regex_group = regex_group - 1
+		end
+
+		-- check if one group and and other start, then create new one
+		-- FIXME remove empty groups (not important)
+		if is_group('end', letter) and is_group('start', future_letter) then
+			append(REGEX_TABLE, regex_group, {})
 		end
 
 		-- check for classes
@@ -196,12 +196,11 @@ local function split(regex)
 	print_table(REGEX_TABLE)
 end
 
-
--- Need fix groups between, it put 2() inside same object
--- split('xyz(xy)(uy)')
-
+split('()(x)()()(y)')
 
 -- TESTING
+--
 -- split('hi(match(sh(ws))(x))(sa)')
 -- split('y^([a-zA-Z](x))(*$)ahoj')
 -- split('xyz(pl(sa))')
+-- split('()(x)()()(y)')
