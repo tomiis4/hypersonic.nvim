@@ -11,13 +11,18 @@ A simple open-source plugin which help you with writing and testing Regex.
     - [ ] Password strength
 - [ ] Live preview
     - [ ] Explain
-        - [ ] Split to one big table
+        - [x] Split to one big table
             - [x] Groups
             - [x] Characters
             - [x] Lit. characters
             - [x] Class
             - [x] Anchors
-            
+        - [ ] Make functions which get what each special char. doing
+            - [ ] ^ | . $ 
+        - [ ] Functions which get what group is doing
+        - [ ] Put explanation in one big table (prob. 2D)
+        - [ ] From 2D return 1D
+        
 - [ ]  Autocomplete?
 
 <hr>
