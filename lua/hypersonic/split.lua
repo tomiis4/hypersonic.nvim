@@ -74,7 +74,6 @@ end
 -- append( []any, int, any(string))
 local function append(tbl, group, value)
 	if group == 1 then
- 		-- table.insert(REGEX_TABLE, "group: "..group.." "..value)
 		table.insert(REGEX_TABLE, value)
  		return
 	end
@@ -130,9 +129,19 @@ local function is_class(type, letter)
 	end
 end
 
--- TODO add other characters ($, ^, ...)
+
+-- Check if is character achor ($, ^, ., |)
+local function is_anchor(letter)
+	if letter == '^' or letter == '$' or letter == '.' or letter == '|' then
+		return true
+	end
+
+	return false
+end
+
 
 -- CAPTURING
+
 
 local function capture_class(group, letter)
 	append(REGEX_TABLE, group, letter)
@@ -168,13 +177,16 @@ local function split(regex)
 		-- check for classes
 		if is_class('start', letter) then
 			can_capture = false
+			append(REGEX_TABLE, regex_group, "#class")
 		elseif is_class('end', letter) then
 			can_capture = true
+			append(REGEX_TABLE, regex_group, "#end-class")
 		end
 
 		-- CAPTURE
-		-- caprure in class
-		if can_capture == false then
+
+		-- caprure content in class without []
+		if can_capture == false and not is_class('start', letter) then
 			capture_class(regex_group, letter)
 		end
 
@@ -190,13 +202,20 @@ local function split(regex)
 		if is_character(prev_letter, letter) and can_capture then
 			append(REGEX_TABLE, regex_group, letter)
 		end
+
+		-- capture anchor
+		if is_anchor(letter) and can_capture then
+			append(REGEX_TABLE, regex_group, letter)
+		end
 	end
 
 
 	print_table(REGEX_TABLE)
 end
 
-split('()(x)()()(y)')
+
+split('gr[ae]y')
+
 
 -- TESTING
 --
