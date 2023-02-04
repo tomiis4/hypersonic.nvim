@@ -15,8 +15,8 @@ A simple open-source plugin which help you with writing and testing Regex.
             - [x] Groups
             - [x] Characters
             - [x] Lit. characters
-            - [ ] Class
-            - [ ] Anchors
+            - [x] Class
+            - [x] Anchors
             
 - [ ]  Autocomplete?
 
