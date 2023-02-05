@@ -1,4 +1,5 @@
 # Hypersonic.nvim
+## (not ready to use, use `lua filename.lua` for testing)
 A simple open-source plugin which help you with writing and testing Regex.
 
 <hr>
@@ -39,6 +40,25 @@ A simple open-source plugin which help you with writing and testing Regex.
 - Recursively loop through table
 - Explant one selection and put explanation in multi-dimensional table
 - Loop trough explanation table and display it.
+
+### File order
+```
+|   README.md
+|   LICENSE
+|
++---lua
+|   \---hypersonic
+|           explain.lua
+|           init.lua
+|           split.lua
+|           uilt.lua
+|
++---plugin
+|       hypersonic.vim
+|
+\---test
+        test.txt
+```
 
 <hr>
 
