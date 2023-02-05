@@ -214,7 +214,7 @@ local function split(regex)
 end
 
 
-split('gr[ae]y')
+split('gr[^a-e]y')
 
 
 -- TESTING
@@ -223,3 +223,4 @@ split('gr[ae]y')
 -- split('y^([a-zA-Z](x))(*$)ahoj')
 -- split('xyz(pl(sa))')
 -- split('()(x)()()(y)')
+-- split('gr[^a-e]y')
