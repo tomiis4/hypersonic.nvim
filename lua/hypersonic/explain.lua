@@ -58,24 +58,48 @@ local function is_symbol(letter)
 	return false
 end
 
--- explain
 
--- check if it contain NOT
---		:-> put in temp_class i=0
---			^ match character that is NOT included in
---			IF future_letter is - then insert to 0
---				range from LETTER to
---			IF letter is - then insert to 0
---				FUTURE LETTER
-
---	check if it not contain NOT
---		IF future_letter is - then insert to next index
---			match characters from LETTER
---		IF letter is - then insert to next index
---			FUTURE LETTER
-
--- check if x1 == character and x2 == character, same as |
---		add OR to things
+-- explain class
+-- How does it work?
+--		Check if class does contain not (^)
+--			if it does contain
+--			check is range (a-z)
+--				if future == - then insert letter (from)
+--				if letter == - then insert future (to)
+--
+--			check is or
+--			a) next each other (ab) is same as a||b
+--				if letters are length 1
+--				and are not symbols (only numbers, a-z)
+--				insert letter and future
+--			b)	if it's separated using | (a|b)
+--				if future == |
+--					(just for better reading)
+--					if table is have only (NOT string)
+--						insert letter
+--					else
+--						insert characters letter
+--				if letter == |
+--					insert future_letter
+--
+--		( i think this is more simple than with ^)
+--		TODO remake first explain with ^
+--		class does not contain not
+--			is empty
+--				range
+--					future == - insert letter
+--				or next each other
+--					if letters are length 1
+--					and are not symbols (only numbers, a-z)
+--					insert letter, future
+--				or with |
+--					future == |
+--						insert letter
+--					letter == |
+--						insert future
+--
+--
+-- FIXME while connecting string, make sure ther are not 2x same chars at 'end'
 
 local temp_class = {}
 local check_class = {
@@ -105,7 +129,6 @@ local function explain_class(letter, future_letter)
 		local is_len_one = #letter == 1 and #future_letter == 1
 		if not is_symbol(letter) and not is_symbol(future_letter) and is_len_one then
 			-- if it have other elements
-			-- FIXME while connecting string, make sure ther are not 2x same chars at 'end'
 			if len(notTable) > 1 then
 				local result = ""..letter.." or "..future_letter
 				table.insert(notTable, result)
