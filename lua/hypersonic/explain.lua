@@ -80,7 +80,7 @@ end
 local temp_class = {}
 local check_class = {
 	not_index = nil,
-	range_index = {}
+	range_index = nil
 }
 local function explain_class(letter, future_letter)
 	-- if contain NOT insert explaination in temp
@@ -89,12 +89,15 @@ local function explain_class(letter, future_letter)
 		temp_class[len(temp_class)+1] = { 'Class #NUMBER matches characters that are NOT included in' }
 	end
 
-	-- same as ^ but with range
-	-- TODO
+	-- same as previous few lines up but with range
 	if future_letter == '-' then
-		local rangeI = check_class['range_index']
-		rangeI = len(temp_class)+1
-		temp_class[len(temp_class)+1] = { '' }
+		check_class['range_index'] = len(temp_class)+1
+		temp_class[len(temp_class)+1] = { 'Class #NUMBER matches characters in range '..letter }
+	elseif letter == '-' then
+		local check_class_index = check_class['range_index']
+		table.insert(temp_class[check_class_index], ' and '..future_letter)
+
+		check_class['range_index'] = nil
 	end
 
 	-- add range elements to NOT
@@ -137,12 +140,6 @@ local function explain_class(letter, future_letter)
 		end
 	end
 
-	-- range
-	if future_letter == '-' then
-		table.insert(notTable, "range between "..letter)
-	elseif letter == '-' then
-		table.insert(notTable, "and "..future_letter)
-	end
 
 	tprint(temp_class)
 end
@@ -183,9 +180,6 @@ local function explain(regex)
 			end
 		end
 	end
-
-
-	-- tprint(response)
 end
 
 
@@ -194,7 +188,7 @@ local regex = {
 	'r',
 	'#class',
 		'a',
-		'|',
+		'-',
 		'y',
 	'#end-class',
 	'y'

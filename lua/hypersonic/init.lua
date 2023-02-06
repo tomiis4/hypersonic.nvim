@@ -1,5 +1,5 @@
 -- remove later
-print("Hypersonic.vim has loaded")
+print("Hypersonic.nvim has loaded")
 
 
 return {
