@@ -18,12 +18,13 @@ A simple open-source plugin which help you with writing and testing Regex.
             - [x] Lit. characters
             - [x] Class
             - [x] Anchors
+        - [x] Explan class
         - [ ] Make functions which get what each special char. doing
             - [ ] ^ | . $ 
         - [ ] Functions which get what group is doing
         - [ ] Put explanation in one big table (prob. 2D)
         - [ ] From 2D return 1D
-        
+
 - [ ]  Autocomplete?
 
 <hr>
@@ -51,7 +52,6 @@ A simple open-source plugin which help you with writing and testing Regex.
 |           explain.lua
 |           init.lua
 |           split.lua
-|           uilt.lua
 |
 +---plugin
 |       hypersonic.vim
