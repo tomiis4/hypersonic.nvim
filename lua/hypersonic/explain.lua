@@ -89,16 +89,6 @@ local function explain_class(letter, future_letter)
 		temp_class[len(temp_class)+1] = { 'Class #NUMBER matches characters that are NOT included in' }
 	end
 
-	-- same as previous few lines up but with range
-	if future_letter == '-' then
-		check_class['range_index'] = len(temp_class)+1
-		temp_class[len(temp_class)+1] = { 'Class #NUMBER matches characters in range '..letter }
-	elseif letter == '-' then
-		local check_class_index = check_class['range_index']
-		table.insert(temp_class[check_class_index], ' and '..future_letter)
-
-		check_class['range_index'] = nil
-	end
 
 	-- add range elements to NOT
 	if check_class['not_index'] ~= nil then
@@ -106,9 +96,9 @@ local function explain_class(letter, future_letter)
 
 		-- range elements
 		if future_letter == '-' then
-			table.insert(notTable, "range between "..letter)
+			table.insert(notTable, "range from "..letter)
 		elseif letter == '-' then
-			table.insert(notTable, "and "..future_letter)
+			table.insert(notTable, "to"..future_letter)
 		end
 
 		-- next eachother
@@ -137,6 +127,50 @@ local function explain_class(letter, future_letter)
 			end
 		elseif letter == '|' then
 			table.insert(notTable, "or "..future_letter)
+		end
+	end
+
+
+	-- explain class without NOT character
+
+	-- TEMP_CLASS is empty
+	if len(temp_class) == 0 then
+		local is_len_one = #letter == 1 and #future_letter == 1
+
+		-- range
+		if future_letter == '-' then
+			temp_class[len(temp_class)+1] = 'Class #NUMBER matches characters in range from '..letter
+		end
+
+		-- or
+		-- next eachother
+		if not is_symbol(letter) and not is_symbol(future_letter) and is_len_one then
+			table.insert(temp_class, "Class #NUMBER matches characters "..letter.." or "..future_letter)
+		end
+
+		-- separated using | symbool
+		if future_letter == '|' then
+			table.insert(temp_class, "Class #NUMBER matches characters "..letter.." ")
+		elseif letter == '|' then
+			table.insert(temp_class, "or "..future_letter)
+		end
+	else
+		-- TEMP_CLASS is not empty
+		-- range
+		if letter == '-' then
+			table.insert(temp_class, ' to '..future_letter)
+		end
+
+		-- or
+		-- next eachother
+		local is_len_one = #letter == 1 and #future_letter == 1
+		if not is_symbol(letter) and not is_symbol(future_letter) and is_len_one then
+			table.insert(temp_class, ""..letter.." or "..future_letter)
+		end
+
+		-- separated using | symbool
+		if letter == '|' then
+			table.insert(temp_class, "or "..future_letter)
 		end
 	end
 
@@ -190,6 +224,9 @@ local regex = {
 		'a',
 		'-',
 		'y',
+		'p',
+		'|',
+		'x',
 	'#end-class',
 	'y'
 }
