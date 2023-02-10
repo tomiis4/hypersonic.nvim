@@ -25,6 +25,31 @@ local function tprint(tbl, indent)
 end
 
 
+local temp_connect_table = ''
+local function connect_table(tbl)
+	for _, elem in pairs(tbl) do
+		if type(elem) == "table" then
+			connect_table(elem)
+		elseif type(elem) == 'string' then
+			-- connect two strings
+
+			-- get last letter of temp_connect_table and first of element
+			local last_table = temp_connect_table:sub(#temp_connect_table, #temp_connect_table)
+			local first_elem = elem:sub(1,1)
+
+			if last_table == first_elem then
+				local removed_last = temp_connect_table:sub(1, #temp_connect_table-1)
+				temp_connect_table = temp_connect_table..removed_last
+			else
+				temp_connect_table = temp_connect_table..elem
+			end
+		end
+	end
+
+	return temp_connect_table
+end
+
+
 -- if is end or start of class
 -- is_class('start' || 'end', string) => boolean
 local function is_class(type, letter)
@@ -60,7 +85,6 @@ end
 
 
 -- explain class
--- How does it work?
 --		Check if class does contain not (^)
 --			if it does contain
 --			check is range (a-z)
@@ -81,9 +105,6 @@ end
 --						insert characters letter
 --				if letter == |
 --					insert future_letter
---
---		( i think this is more simple than with ^)
---		TODO remake first explain with ^
 --		class does not contain not
 --			is empty
 --				range
@@ -103,97 +124,80 @@ end
 
 local temp_class = {}
 local check_class = {
-	not_index = nil,
-	range_index = nil
+	not_index = nil
 }
 local function explain_class(letter, future_letter)
-	-- if contain NOT insert explaination in temp
+	-- if regex contains NOT (^), add it to check
 	if letter == '^' then
-		check_class['not_index'] = len(temp_class)+1
-		temp_class[len(temp_class)+1] = { 'Class #NUMBER matches characters that are NOT included in' }
+		check_class['not_index'] = 1
+		table.insert(temp_class, 'Class #NUMBER matches characters that are NOT included in')
 	end
 
-
-	-- add range elements to NOT
 	if check_class['not_index'] ~= nil then
-		local notTable = temp_class[check_class['not_index']]
-
-		-- range elements
+		-- check for range
 		if future_letter == '-' then
-			table.insert(notTable, "range from "..letter)
+			table.insert(temp_class, "range from "..letter)
 		elseif letter == '-' then
-			table.insert(notTable, "to"..future_letter)
+			table.insert(temp_class, " to "..future_letter)
 		end
 
+		-- or
 		-- next eachother
-		local is_len_one = #letter == 1 and #future_letter == 1
 		if not is_symbol(letter) and not is_symbol(future_letter) and is_len_one then
-			-- if it have other elements
-			if len(notTable) > 1 then
-				local result = ""..letter.." or "..future_letter
-				table.insert(notTable, result)
-			else
-				-- there is only NOT character
-				local result = "characters "..letter.." or "..future_letter
-				table.insert(notTable, result)
-			end
+			table.insert(temp_class, "characters"..letter.." or "..future_letter)
 		end
 
-		-- or operator (|)
+		-- or
+		-- | symbol
 		if future_letter == '|' then
-			-- if there is multiple checks
-			if len(notTable) > 1 then
-				table.insert(notTable, ""..letter)
-			else
-				-- there is only NOT
-				table.insert(notTable, "characters "..letter)
-			end
+			table.insert(temp_class, "or characters "..letter)
 		elseif letter == '|' then
-			table.insert(notTable, "or "..future_letter)
+			table.insert(temp_class, " or "..future_letter)
 		end
 	end
 
 
 	-- explain class without NOT character
+	if check_class['not_index'] == nil then
+		-- TEMP_CLASS is empty
+		if len(temp_class) == 0 then
+			local is_len_one = #letter == 1 and #future_letter == 1
 
-	-- TEMP_CLASS is empty
-	if len(temp_class) == 0 then
-		local is_len_one = #letter == 1 and #future_letter == 1
+			-- range
+			if future_letter == '-' then
+				temp_class[len(temp_class)+1] = 'Class #NUMBER matches characters in range from '..letter
+			end
 
-		-- range
-		if future_letter == '-' then
-			temp_class[len(temp_class)+1] = 'Class #NUMBER matches characters in range from '..letter
-		end
+			-- or
+			-- next eachother
+			if not is_symbol(letter) and not is_symbol(future_letter) and is_len_one then
+				table.insert(temp_class, "Class #NUMBER matches characters "..letter.." or "..future_letter)
+			end
 
-		-- or
-		-- next eachother
-		if not is_symbol(letter) and not is_symbol(future_letter) and is_len_one then
-			table.insert(temp_class, "Class #NUMBER matches characters "..letter.." or "..future_letter)
-		end
+			-- separated using | symbool
+			if future_letter == '|' then
+				table.insert(temp_class, "Class #NUMBER matches characters "..letter.." ")
+			elseif letter == '|' then
+				table.insert(temp_class, "or "..future_letter)
+			end
+		else
+			-- TEMP_CLASS is not empty
+			-- range
+			if letter == '-' then
+				table.insert(temp_class, ' to '..future_letter)
+			end
 
-		-- separated using | symbool
-		if future_letter == '|' then
-			table.insert(temp_class, "Class #NUMBER matches characters "..letter.." ")
-		elseif letter == '|' then
-			table.insert(temp_class, "or "..future_letter)
-		end
-	else
-		-- TEMP_CLASS is not empty
-		-- range
-		if letter == '-' then
-			table.insert(temp_class, ' to '..future_letter)
-		end
+			-- or
+			-- next eachother
+			local is_len_one = #letter == 1 and #future_letter == 1
+			if not is_symbol(letter) and not is_symbol(future_letter) and is_len_one then
+				table.insert(temp_class, ""..letter.." or "..future_letter)
+			end
 
-		-- or
-		-- next eachother
-		local is_len_one = #letter == 1 and #future_letter == 1
-		if not is_symbol(letter) and not is_symbol(future_letter) and is_len_one then
-			table.insert(temp_class, ""..letter.." or "..future_letter)
-		end
-
-		-- separated using | symbool
-		if letter == '|' then
-			table.insert(temp_class, "or "..future_letter)
+			-- separated using | symbool
+			if letter == '|' then
+				table.insert(temp_class, "or "..future_letter)
+			end
 		end
 	end
 
@@ -229,6 +233,9 @@ local function explain(regex)
 			if isClass == true and is_start_end then
 				local class_table = explain_class(elem, regex[i+1])
 				tprint(class_table)
+				-- connect_table(class_table)
+				-- print(temp_connect_table)
+				-- temp_connect_table = ''
 			end
 
 			-- check if is end of class and clear temp_class
@@ -245,6 +252,7 @@ local regex = {
 	'g',
 	'r',
 	'#class',
+		'^',
 		'a',
 		'-',
 		'y',
