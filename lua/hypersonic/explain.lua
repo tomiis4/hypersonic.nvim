@@ -198,7 +198,7 @@ local function explain_class(letter, future_letter)
 	end
 
 
-	tprint(temp_class)
+	return temp_class
 end
 
 -- main
@@ -227,7 +227,8 @@ local function explain(regex)
 			-- is_class variable check if is not empty table | regexI+1 = next letter
 			local is_start_end = is_class('start', elem) == false and is_class('end', elem) == false
 			if isClass == true and is_start_end then
-				explain_class(elem, regex[i+1])
+				local class_table = explain_class(elem, regex[i+1])
+				tprint(class_table)
 			end
 
 			-- check if is end of class and clear temp_class
