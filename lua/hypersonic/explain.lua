@@ -238,9 +238,11 @@ local function explain(regex)
 			if is_class('end', elem) then
 				isClass = false
 
+
 				local str_table = connect_table(temp_class)
 				table.insert(response, str_table)
 
+				-- clear temp class
 				temp_class = {}
 			end
 		end
