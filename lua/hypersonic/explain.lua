@@ -122,8 +122,6 @@ end
 --					letter == |
 --						insert future
 --
---
--- FIXME while connecting string, make sure ther are not 2x same chars at 'end'
 
 local temp_class = {}
 local check_class = {
@@ -204,10 +202,9 @@ local function explain_class(letter, future_letter)
 			end
 		end
 	end
-
-
-	return temp_class
 end
+
+-- main
 
 -- main
 
@@ -234,15 +231,16 @@ local function explain(regex)
 			-- is_class variable check if is not empty table | regexI+1 = next letter
 			local is_start_end = is_class('start', elem) == false and is_class('end', elem) == false
 			if isClass == true and is_start_end then
-				local class_table = explain_class(elem, regex[i+1])
-				local str_table = connect_table(class_table)
-
-				table.insert(response, str_table)
+				explain_class(elem, regex[i+1])
 			end
 
 			-- check if is end of class and clear temp_class
 			if is_class('end', elem) then
 				isClass = false
+
+				local str_table = connect_table(temp_class)
+				table.insert(response, str_table)
+
 				temp_class = {}
 			end
 		end
