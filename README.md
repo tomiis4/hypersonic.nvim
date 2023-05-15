@@ -1,48 +1,27 @@
 # Hypersonic.nvim
-## (not ready to use, use `lua filename.lua` for testing)
-A simple open-source plugin which help you with writing and testing Regex.
+<p align="center"> A simple open-source plugin which help you with writing and testing Regex. </p>
+<p align="center"> ! not ready for use ! </p>
+
 
 <hr>
 
-### TODO
-- [ ] Snippets
-    - [ ] Email
-    - [ ] Phone
-    - [ ] URL
-    - [ ] Password strength
+
+### Goals
+- [ ] Explain
 - [ ] Live preview
-    - [ ] Explain
-        - [x] Split to one big table
-            - [x] Groups
-            - [x] Characters
-            - [x] Lit. characters
-            - [x] Class
-            - [x] Anchors
-        - [x] Explan class
-        - [ ] Make functions which get what each special char. doing
-            - [ ] ^ | . $ 
-        - [ ] Functions which get what group is doing
-        - [ ] Put explanation in one big table (prob. 2D)
-        - [ ] From 2D return 1D
+- [ ] Snippets
 
-- [ ]  Autocomplete?
 
 <hr>
 
-### Explaining
-#### <b> Live preview</b>
-- Split regex to groups
-    - `\` - literal characters
-    - `x` - characters
-    - `()` - groups
-    - `[]` - character class
-    - `^` - Anchors
-- Put it in one multi-dimensional table
-- Recursively loop through table
-- Explant one selection and put explanation in multi-dimensional table
-- Loop trough explanation table and display it.
 
-### File order
+### More in PLAN.md
+
+
+<hr>
+
+
+### File order, not sync.
 ```
 |   README.md
 |   LICENSE
