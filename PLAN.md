@@ -69,7 +69,7 @@ local special_table = {
 ```
 
 ##### output: 
-```js
+```c
 +-------------------------------------------+
 | Regex: gr[ae]y                            |
 |-------------------------------------------+
@@ -79,6 +79,22 @@ local special_table = {
 +-------------------------------------------+
 ```
 
+- create `result` table
+    - idx 1 = title (format: `Regex: <regex>`)
+- recursively loop trough `input`
+    - non groups
+        - if char will start with `\`, get info from `special_table`
+- merge that tables, so it's nice output
+
+- to fix
+    - `.`, any character
+    - `|`, or
+    - `?`, zero or one x?
+    - `*`, 0 or more x*
+    - `+`, 1 or more x+
+    - `-`, from-to
+    - `$`, end of string
+    - `^`, start of string
 
 # Goals
 - Explain
