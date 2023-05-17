@@ -1,0 +1,26 @@
+Newline  \n
+Carriage return  \r
+Tab  \t
+Any whitespace character  \s
+Any non-whitespace character  \S
+Any digit  \d
+Any non-digit  \D
+Any word character  \w
+Any non-word character  \W
+A word boundary  \b
+Non-word boundary  \B
+Null character  \0
+
+Any Unicode sequences, linebreaks included  \X
+Match one data unit  \C
+Unicode newlines  \R
+Match anything but a newline  \N
+Vertical whitespace character  \v
+Negation of \v  \V
+Horizontal whitespace character  \h
+Negation of \h  \H
+Reset match  \K
+Start of match  \G
+Start of string  \A
+End of string  \Z
+Absolute end of string  \z

@@ -86,7 +86,7 @@ local special_table = {
         - if char will start with `\`, get info from `special_table`
         - else put char in table
 
-<!-- TODO -->
+## TODO
 - to fix
     - `.`, any character
     - `|`, or
