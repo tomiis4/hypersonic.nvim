@@ -84,8 +84,9 @@ local special_table = {
 - recursively loop trough `input`
     - non groups
         - if char will start with `\`, get info from `special_table`
-- merge that tables, so it's nice output
+        - else put char in table
 
+<!-- TODO -->
 - to fix
     - `.`, any character
     - `|`, or
@@ -95,6 +96,11 @@ local special_table = {
     - `-`, from-to
     - `$`, end of string
     - `^`, start of string
+
+
+# Merge
+- merge that tables, so it's nice output
+
 
 # Goals
 - Explain
