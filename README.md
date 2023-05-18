@@ -74,11 +74,12 @@ require('hypersonic').setup {
 |   README.md
 |
 +---lua
-|   |   split.lua
 |   |
 |   \---hypersonic
 |           characters.txt
 |           config.lua
+|           explain.lua
+|           split.lua
 |           utils.lua
 |
 +---plugin
@@ -186,26 +187,12 @@ local meta_table = {
 
 ```lua
 {
-    ['title'] = 'gr[ae]y',
-    ['gr']    = 'Begins with "gr"',
-    ['[ae]']  = 'Followed by either "a" or "e"',
-    ['y']     = 'Ends with "y"'
+    {'title',  'gr[ae]y'},
+    {'g',      'Match "g'}
+    {'r',      'Match "r'}
+    {'[ae]',   'Followed by either "a" or "e"'},
+    {'y',      'Match "y"'}
 }
-```
-
-</details>
-
-<details>
-<summary> NeoVim output </summary>
-
-```c
-+-------------------------------------------+
-| Regex: gr[ae]y                            |
-|-------------------------------------------+
-| gr:   Begins with "gr"                    |
-| [ae]: Followed by either "a" or "e"       |
-| y:    Ends with "y"                       |
-+-------------------------------------------+
 ```
 
 </details>
@@ -234,7 +221,56 @@ local meta_table = {
     - `$`, end of string
     - `^`, start of string
 
+
+### Merge
+
+<details>
+<summary> input </summary>
+
+```js
+{
+    {'title',  'gr[ae]y'},
+    {'g',      'Match "g'}
+    {'r',      'Match "r'}
+    {'[ae]',   'Followed by either "a" or "e"'},
+    {'y',      'Match "y"'}
+}
+```
+
 </details>
+
+<details>
+<summary> output </summary>
+
+```lua
+{
+    {'title',  'gr[ae]y'},
+    {'gr',     'Begins with "gr"'},
+    {'[ae]',   'Followed by either "a" or "e"'},
+    {'y',      'Ends with "y"'}
+}
+```
+
+</details>
+
+<details>
+<summary> NeoVim output </summary>
+
+```c
++-------------------------------------------+
+| Regex: gr[ae]y                            |
+|-------------------------------------------+
+| gr:   Begins with "gr"                    |
+| [ae]: Followed by either "a" or "e"       |
+| y:    Ends with "y"                       |
++-------------------------------------------+
+```
+
+</details>
+
+
+</details>
+
 
 ## Contributors
 <table>

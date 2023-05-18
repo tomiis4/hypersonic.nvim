@@ -1,20 +1,9 @@
 local M = {}
 local U = require('hypersonic.utils')
 
--- testing
-local input = 'gr[ae]y'
-local input_test = {
-    '^hello',
-    '(\\/)(.*?)(\\/)',
-    '\\d*',
-    'gr[ae]y',
-    '^[a-zA-Z]+$',
-    '^\\S+$'
-}
-
--- @param str string
--- @return table
-local split = function(str)
+---@param str string
+---@return table
+M.split = function(str)
     local main = {}
     local depth = 0
     local escape_char = false
@@ -47,12 +36,4 @@ local split = function(str)
     return main
 end
 
-M.test_split = function()
-    for _, v in pairs(input_test) do
-        U.print_table(split(v), 0)
-    end
-end
-
-
-M.test_split()
-U.print_table(split(input), 0)
+return M

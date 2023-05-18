@@ -1,6 +1,15 @@
 local U = {}
 
-local meta_table = {
+U.input_test = {
+    '^hello',
+    '(\\/)(.*?)(\\/)',
+    '\\d*',
+    'gr[ae]y',
+    '^[a-zA-Z]+$',
+    '^\\S+$'
+}
+
+U.meta_table = {
     ['n'] = 'Newline',
     ['r'] = 'Carriage return',
     ['t'] = 'Tab',
@@ -25,28 +34,28 @@ local meta_table = {
     ['z'] = 'Absolute end of string'
 }
 
--- @param tbl table
--- @param n number
--- @return nil
+---@param tbl table
+---@param n number
+---@return nil
 U.print_table = function(tbl, n)
     n = n or 0
 
     print(string.rep('   ', n) .. '{')
 
-    for _, v in pairs(tbl) do
+    for i, v in pairs(tbl) do
         if type(v) == 'table' then
             U.print_table(v, n + 1)
         else
-            print(string.rep('  ', n + 1) .. string.format('%q,', v))
+            print(string.rep('  ', n + 1) .. string.format('[%q]: %q,', i, v))
         end
     end
     print(string.rep('   ', n) .. '},')
 end
 
--- @param tbl table
--- @param ctx string
--- @param depth number
--- @return table
+---@param tbl table
+---@param ctx table|string
+---@param depth number
+---@return table
 U.insert = function(tbl, depth, ctx)
     local last_item = tbl
 
@@ -63,14 +72,20 @@ U.insert = function(tbl, depth, ctx)
     return tbl
 end
 
--- @param char string
--- @return bool
+---@param char string
+---@return boolean
 U.is_meta_char = function(char)
-    if meta_table[char] ~= nil then
+    if U.meta_table[char] ~= nil then
         return true
     end
 
     return false
+end
+
+---@param char string
+---@return boolean
+U.is_escape_char = function(char)
+    return string.sub(char, 1,1) == "\\"
 end
 
 return U
