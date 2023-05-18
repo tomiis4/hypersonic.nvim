@@ -25,8 +25,8 @@ local split = function(str)
         if (char == '[' or char == '(') and not escape_char then
             local label = char == '[' and '#CLASS' or '#GROUP'
 
+            U.insert(main, depth, {label})
             depth = depth + 1
-            U.insert(main, depth, label)
 
         elseif (char == ']' or char == ')') and not escape_char then
             depth = depth - 1
@@ -39,6 +39,7 @@ local split = function(str)
             U.insert(main, depth, '\\' .. char)
 
         else
+            escape_char = false
             U.insert(main, depth, char)
         end
     end

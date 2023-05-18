@@ -1,9 +1,5 @@
 <h1 align="center"> My Plans For Explaining </h1>
 
-- [ ] Take regex from current line.
-- [ ] Spit to specified format.
-- [ ] Explain that regex.
-- [ ] Return result in floating window.
 
 
 # Split
@@ -27,19 +23,20 @@ gr[ae]y
 }
 ```
 
-##### special table: 
+##### meta characters table: 
 ```lua
-local special_table = {
-    ["Newline"]                      = "n",
-    ["Carriage return"]              = "r",
-    ["Tab"]                          = "t",
-    ["Any whitespace character"]     = "s",
-    ["Any non-whitespace character"] = "S"
+local meta_table = {
+    ['n'] = 'Newline',
+    ['r'] = 'Carriage return',
+    ['t'] = 'Tab',
+    ['s'] = 'Any whitespace character',
+    ['S'] = 'Any non-whitespace character',
+    ['d'] = 'Any digit',
     -- more in characters.txt
 }
 ```
 
-- create new table `main={}`, variable `depth=0`, `special=false`
+- create new table `main={}`, variable `depth=0`, `escape_char=false`
 - loop for each char
     - `(`, `[`
         - `depth++`
@@ -47,8 +44,8 @@ local special_table = {
     - `)`, `]`
         - `depth--`
     - `\`
-        - `special=true`
-        - if `special` will be `true` and next char. is in special table
+        - `escape_char=true`
+        - if `escape_char` will be `true` and next char. is in meta characters table
             - put `\<char>`, else put only char
 
 
@@ -83,7 +80,7 @@ local special_table = {
     - idx 1 = title (format: `Regex: <regex>`)
 - recursively loop trough `input`
     - non groups
-        - if char will start with `\`, get info from `special_table`
+        - if char will start with `\`, get info from `meta_table`
         - else put char in table
 
 ## TODO
