@@ -10,10 +10,15 @@ M.split = function(tbl, result_tbl)
         if type(v) == 'table' then
             M.split(v, result_tbl)
         elseif U.is_escape_char(v) then
-            local c = string.sub(v, 2,2)
-            local e = U.meta_table[c]
+            local meta_char = string.sub(v, 2,2)
+            local meta_explain =
+                U.meta_table[meta_char] == nil
+                and 'Match '..v --TODO: add exlpaining for .*? char.
+                or U.meta_table[meta_char]
 
-            table.insert(result_tbl, {v, e})
+            table.insert(result_tbl, {v, meta_explain})
+        else
+            table.insert(result_tbl, {v, "Match "..v})
         end
 
     end

@@ -23,7 +23,7 @@ M.split = function(str)
         elseif char == '\\' then
             escape_char = true
 
-        elseif escape_char and U.is_meta_char(char) then
+        elseif escape_char then
             escape_char = false
             U.insert(main, depth, '\\' .. char)
 
