@@ -2,11 +2,25 @@ local U = {}
 
 U.input_test = {
     '^hello',
-    '(\\/)(.*?)(\\/)',
+    '(\\/)(.*)(\\/)',
     '\\d*',
     'gr[ae]y',
-    '^[a-zA-Z]+$',
+    '^[a-zA-Z|]+$',
     '^\\S+$'
+}
+
+U.char_table = {
+    ['^'] = 'Start of strig',
+    ['$'] = 'End of strig',
+    ['.'] = 'Every single character',
+}
+
+U.special_table = {
+    ['|'] = 'or',
+    ['-'] = 'to',
+    ['?'] = 'Matches 0 or 1 times',
+    ['*'] = 'Matches 0 or more times',
+    ['+'] = 'Matches 1 or more'
 }
 
 U.meta_table = {
@@ -85,7 +99,7 @@ end
 ---@param char string
 ---@return boolean
 U.is_escape_char = function(char)
-    return string.sub(char, 1,1) == "\\"
+    return string.sub(char, 1,1) == '\\'
 end
 
 return U
