@@ -1,9 +1,9 @@
-local M = {}
-local U = require('hypersonic.utils')
+local S = {}
+local U = require('utils')
 
 ---@param str string
 ---@return table
-M.split = function(str)
+S.split = function(str)
     local main = {}
     local depth = 0
     local escape_char = false
@@ -11,22 +11,27 @@ M.split = function(str)
     for i = 1, #str do
         local char = string.sub(str, i, i)
 
+        -- get groups
         if (char == '[' or char == '(') and not escape_char then
             local label = char == '[' and '#CLASS' or '#GROUP'
 
-            U.insert(main, depth, {label})
+            U.insert(main, depth, { label })
             depth = depth + 1
 
+         -- end groups
         elseif (char == ']' or char == ')') and not escape_char then
             depth = depth - 1
 
+        -- get escape
         elseif char == '\\' then
             escape_char = true
 
+        -- add escape
         elseif escape_char then
             escape_char = false
             U.insert(main, depth, '\\' .. char)
 
+        -- get normal chars
         else
             escape_char = false
             U.insert(main, depth, char)
@@ -36,4 +41,4 @@ M.split = function(str)
     return main
 end
 
-return M
+return S

@@ -29,6 +29,11 @@ Note: Hypersonic is currently under development and is not ready for immediate u
 - **Snippet Integration**: Save time and effort with Hypersonic's snippet integration. Easily access and insert commonly used RegExp patterns with just a few keystrokes.
 
 
+## Language support
+- [ ] JavaScript
+- [ ] Lua
+
+
 ## Installation
 
 <details>
