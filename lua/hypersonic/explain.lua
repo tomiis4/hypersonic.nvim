@@ -1,4 +1,3 @@
--- FIXME: make some format, that will know if is it inside group/class
 -- TODO: make it more readable
 
 local U = require('utils')
@@ -11,17 +10,13 @@ local M = {}
 local explain_char = function(char)
     if U.is_escape_char(char) then
         local single_char = string.sub(char, 2, 2)
-        local meta_explain =
-            T.meta_table[single_char] == nil
-            and 'Match escaped ' .. char
-            or T.meta_table[single_char]
+        local meta_explain = T.meta_table[single_char] or ('Match escaped '..char)
+
         return meta_explain
-    elseif T.char_table[char] ~= nil then
-        return T.char_table[char]
-    elseif T.special_table[char] ~= nil then
-        return T.special_table[char]
     else
-        return "Match " .. char
+        local tables_explain = T.special_table[char] or T.char_table[char] or ('Match '..char)
+
+        return tables_explain
     end
 end
 
@@ -73,6 +68,7 @@ M.explain = function(tbl, result_tbl)
     return result_tbl
 end
 
+-- TESTING
 -- local test_idx = 5
 local test_idx = 7
 local test_tbl = S.split(T.test_inputs[test_idx])

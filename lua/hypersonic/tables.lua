@@ -7,7 +7,7 @@ T.test_inputs = {
     'gr[ae]y',
     '^[a-zA-Z|]+$',
     '^\\S+$',
-    'x(y(\\d+))'
+    'x(y(\\d+)\\()'
 }
 
 T.char_table = {
