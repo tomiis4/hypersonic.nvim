@@ -1,5 +1,3 @@
--- TODO: make it more readable
-
 local U = require('utils')
 local S = require('split')
 local T = require('tables')
@@ -69,7 +67,6 @@ M.explain = function(tbl, result_tbl)
 end
 
 -- TESTING
--- local test_idx = 5
 local test_idx = 7
 local test_tbl = S.split(T.test_inputs[test_idx])
 U.print_table(test_tbl, 0); print("\n")
