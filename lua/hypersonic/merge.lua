@@ -5,13 +5,16 @@ local T = require('tables')
 local M = {}
 
 ---@param tbl table
-M.merge = function(tbl)
-
+---@param merged table
+---@return table
+M.merge = function(tbl, merged)
 end
 
-local test_idx = 7
-local test_tbl = S.split(T.test_inputs[test_idx])
-local explained_tbl = E.explain(test_tbl, { { 'Regex', T.test_inputs[test_idx] } })
-U.print_table(M.merge(explained_tb.print_table(M.merge(explained_tbl))))
+local idx = 5
+local split_tbl = S.split(T.test_inputs[idx])
+local expl_tbl = E.explain(split_tbl, {})
+
+U.print_table(M.merge(expl_tbl, {}), 0)
+
 
 return M

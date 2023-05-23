@@ -8,11 +8,11 @@ local M = {}
 local explain_char = function(char)
     if U.is_escape_char(char) then
         local single_char = string.sub(char, 2, 2)
-        local meta_explain = T.meta_table[single_char] or ('Match escaped '..char)
+        local meta_explain = T.meta_table[single_char] or ('Match escaped ' .. char)
 
         return meta_explain
     else
-        local tables_explain = T.special_table[char] or T.char_table[char] or ('Match '..char)
+        local tables_explain = T.special_table[char] or T.char_table[char] or ('Match ' .. char)
 
         return tables_explain
     end
@@ -22,7 +22,7 @@ end
 ---@param tbl table
 ---@return table
 local explain_class = function(tbl)
-    local class = { {'class #CLASS', tbl[1]} }
+    local class = { { 'class #CLASS', tbl[1] } }
 
     for idx, v in pairs(tbl) do
         if v ~= '#CLASS' then
@@ -36,7 +36,7 @@ local explain_class = function(tbl)
             table.insert(class, { v, explained })
 
             -- add "or"
-            local not_range = tbl[idx+1] ~= '-' and tbl[idx] ~= '-'
+            local not_range = tbl[idx + 1] ~= '-' and tbl[idx] ~= '-'
             if idx ~= #tbl and not_range then
                 table.insert(class, { '', 'or' })
             end
@@ -67,10 +67,11 @@ M.explain = function(tbl, result_tbl)
 end
 
 -- TESTING
-local test_idx = 7
-local test_tbl = S.split(T.test_inputs[test_idx])
-U.print_table(test_tbl, 0); print("\n")
-local result = M.explain(test_tbl, { { 'Regex', T.test_inputs[test_idx] } })
-U.print_table(result, 0)
+for _, v in pairs(T.test_inputs) do
+    local test_tbl = S.split(v)
+    local result = M.explain(test_tbl, { { 'Regex', v } })
+    U.print_table(result, 0)
+end
+
 
 return M

@@ -1,4 +1,3 @@
-local T = require('tables')
 local U = {}
 
 ---@param tbl table

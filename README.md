@@ -54,8 +54,23 @@ use 'tomiis4/Hypersonic.nvim'
 
 </details>
 
+<details>
+<summary> Using lazy </summary>
 
-## Configuration
+```lua
+return {
+    'tomiis4/Hypersonic.nvim',
+    cmd = "Hypersonic",
+    config = function()
+        require('hypersonic')
+    end
+}
+```
+
+</details>
+
+
+## Setup
 
 ```lua
 require('hypersonic').setup()
@@ -192,11 +207,16 @@ local meta_table = {
 
 ```lua
 {
-    {'title',  'gr[ae]y'},
-    {'g',      'Match "g'}
-    {'r',      'Match "r'}
-    {'[ae]',   'Followed by either "a" or "e"'},
-    {'y',      'Match "y"'}
+    { "Regex", "gr[ae]y" },
+    { "g",     "Match g" },
+    { "r",     "Match r" },
+    {
+        { "class #CLASS", "#CLASS" },
+        { "a",            "Match a", },
+        { "",             "or", },
+        { "e",            "Match e", },
+    },
+    { "y", "Match y", }
 }
 ```
 
@@ -234,11 +254,16 @@ local meta_table = {
 
 ```js
 {
-    {'title',  'gr[ae]y'},
-    {'g',      'Match "g'}
-    {'r',      'Match "r'}
-    {'[ae]',   'Followed by either "a" or "e"'},
-    {'y',      'Match "y"'}
+    { "Regex", "gr[ae]y" },
+    { "g",     "Match g" },
+    { "r",     "Match r" },
+    {
+        { "class #CLASS", "#CLASS" },
+        { "a",            "Match a", },
+        { "",             "or", },
+        { "e",            "Match e", },
+    },
+    { "y", "Match y", }
 }
 ```
 
@@ -249,9 +274,9 @@ local meta_table = {
 
 ```lua
 {
-    {'title',  'gr[ae]y'},
+    {'Regex',  'gr[ae]y'},
     {'gr',     'Begins with "gr"'},
-    {'[ae]',   'Followed by either "a" or "e"'},
+    {'[ae]',   '<space>Followed by either "a" or "e"'},
     {'y',      'Ends with "y"'}
 }
 ```
@@ -272,6 +297,11 @@ local meta_table = {
 ```
 
 </details>
+
+- recursively loop trough `input`
+- if is second element `#CLASS`
+    - merge class
+        - 
 
 
 </details>

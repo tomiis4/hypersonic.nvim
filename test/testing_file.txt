@@ -1,6 +1,17 @@
+// testing with
+
 /^hello/
 /(\/)(.*?)(\/)/
 /\d*/
 /gr[ae]y/
 /^[a-zA-Z]+$/
 /^\S+$/
+
+
+
+// testing on
+
+htpps://github.com/tomiis
+testing.mail@gmail.com
+C:\path\to\x
+C:/path/to/y
