@@ -6,15 +6,38 @@ local M = {}
 
 ---@param tbl table
 ---@param merged table
+---@param depth integer
 ---@return table
-M.merge = function(tbl, merged)
+local function merge_str(class, merged, depth)
+    local temp_str = ""
+
+    for char, v in pairs(class) do
+        local depth_str = U.get_depth(depth)
+
+    end
+
+    return merged
 end
 
-local idx = 5
+---@param tbl table
+---@param merged table
+---@param depth integer
+---@return table
+M.merge = function(tbl, merged, depth)
+    for _, v in pairs(tbl) do
+        print(v)
+        U.print_table(v,0)
+    end
+
+    return merged
+end
+
+local idx = 4
 local split_tbl = S.split(T.test_inputs[idx])
 local expl_tbl = E.explain(split_tbl, {})
 
-U.print_table(M.merge(expl_tbl, {}), 0)
+M.merge(expl_tbl, {}, 0)
+-- U.print_table(M.merge(expl_tbl, {}, 0), 0)
 
 
 return M

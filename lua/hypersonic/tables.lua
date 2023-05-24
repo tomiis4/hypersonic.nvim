@@ -7,12 +7,13 @@ T.test_inputs = {
     'gr[ae]y',
     '^[a-zA-Z|]+$',
     '^\\S+$',
-    'x(y(\\d+)\\()'
+    'x(y(\\d+)\\()',
+    'a|x'
 }
 
 T.char_table = {
-    ['^'] = 'Start of strig',
-    ['$'] = 'End of strig',
+    ['^'] = 'Start of string',
+    ['$'] = 'End of string',
     ['.'] = 'Every single character',
 }
 

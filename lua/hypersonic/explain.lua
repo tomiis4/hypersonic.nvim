@@ -33,6 +33,12 @@ local explain_class = function(tbl)
                 explained = 'Match |'
             end
 
+            -- class does not have "^" as "Start of string"
+            if explained == T.char_table['^'] then
+                local expl = idx == 1 and 'Match except' or 'Match ^'
+                explained = expl
+            end
+
             table.insert(class, { v, explained })
 
             -- add "or"
@@ -67,11 +73,11 @@ M.explain = function(tbl, result_tbl)
 end
 
 -- TESTING
-for _, v in pairs(T.test_inputs) do
-    local test_tbl = S.split(v)
-    local result = M.explain(test_tbl, { { 'Regex', v } })
-    U.print_table(result, 0)
-end
+-- for _, v in pairs(T.test_inputs) do
+--     local test_tbl = S.split(v)
+--     local result = M.explain(test_tbl, { { 'Regex', v } })
+--     U.print_table(result, 0)
+-- end
 
 
 return M

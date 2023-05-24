@@ -110,7 +110,7 @@ require('hypersonic').setup {
 
 ```
 
-<details>
+<details open>
 <summary> How does it work </summary>
 
 ## How does it work?
@@ -202,7 +202,7 @@ local meta_table = {
 
 </details>
 
-<details>
+<details open>
 <summary> output </summary>
 
 ```lua
@@ -249,7 +249,7 @@ local meta_table = {
 
 ### Merge
 
-<details>
+<details open>
 <summary> input </summary>
 
 ```js
@@ -298,16 +298,20 @@ local meta_table = {
 
 </details>
 
-- recursively loop trough `input`
+- recursively loop trough `input`, not including `idx=1`
 - if is second element `#CLASS`
+    - `depth++`
+    - make new element
     - merge class
-        - 
-
+        - if prev. elem was *to*, next element add  without *Match* & `depth++`
+- while is not escaped or special, group them
+- while adding item, add `<space> * depth`
 
 </details>
 
 
 ## Contributors
+
 <table>
     <tbody>
         <tr>
