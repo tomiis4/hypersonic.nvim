@@ -110,7 +110,7 @@ require('hypersonic').setup {
 
 ```
 
-<details open>
+<details>
 <summary> How does it work </summary>
 
 ## How does it work?
@@ -202,7 +202,7 @@ local meta_table = {
 
 </details>
 
-<details open>
+<details>
 <summary> output </summary>
 
 ```lua
@@ -249,7 +249,7 @@ local meta_table = {
 
 ### Merge
 
-<details open>
+<details>
 <summary> input </summary>
 
 ```js
@@ -269,7 +269,7 @@ local meta_table = {
 
 </details>
 
-<details>
+<details open>
 <summary> output </summary>
 
 ```lua
@@ -298,14 +298,23 @@ local meta_table = {
 
 </details>
 
+---
+- TODO
+    - [ ] Figure out what to do with classes
+---
 - recursively loop trough `input`, not including `idx=1`
-- if is second element `#CLASS`
-    - `depth++`
-    - make new element
-    - merge class
-        - if prev. elem was *to*, next element add  without *Match* & `depth++`
-- while is not escaped or special, group them
-- while adding item, add `<space> * depth`
+- make empty string `temp_inp`
+- if is normal letter/number (starts with "Match ")
+    - `temp_inp` is empty
+        - add `"Match " + "x"`
+    - is not empty
+        - remove last element (if is `"`), add letter, add `"`
+- if is `temp_inp` not empty and char. is some special e.g. `|`
+    - in `temp_inp` remove "Match" and add "Match either"
+- if is some special explanation (does not start with "Match ")
+    - if is `temp_inp` not empty, push it to new explanation
+    - make it empty and push special explanation
+- if is recursively, depth++
 
 </details>
 
