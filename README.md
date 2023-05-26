@@ -81,7 +81,8 @@ require('hypersonic').setup()
 
 ```lua
 require('hypersonic').setup {
-    -- todo
+    ---@type 'round'|'bold'|'double'|'none'
+    border = 'round',
 }
 ```
 
@@ -110,7 +111,7 @@ require('hypersonic').setup {
 
 ```
 
-<details>
+<details open>
 <summary> How does it work </summary>
 
 ## How does it work?
@@ -249,7 +250,7 @@ local meta_table = {
 
 ### Merge
 
-<details>
+<details open>
 <summary> input </summary>
 
 ```js
@@ -303,18 +304,18 @@ local meta_table = {
     - [ ] Figure out what to do with classes
 ---
 - recursively loop trough `input`, not including `idx=1`
-- make empty string `temp_inp`
+- make empty string `temp_expl`
 - if is normal letter/number (starts with "Match ")
-    - `temp_inp` is empty
+    - `temp_expl` is empty
         - add `"Match " + "x"`
     - is not empty
         - remove last element (if is `"`), add letter, add `"`
-- if is `temp_inp` not empty and char. is some special e.g. `|`
-    - in `temp_inp` remove "Match" and add "Match either"
+- if is `temp_expl` not empty and char. is some special e.g. `|`
+    - in `temp_expl` remove "Match" and add "Match either"
 - if is some special explanation (does not start with "Match ")
-    - if is `temp_inp` not empty, push it to new explanation
+    - if is `temp_expl` not empty, push it to new explanation
     - make it empty and push special explanation
-- if is recursively, depth++
+- if is recursively, `depth++`
 
 </details>
 

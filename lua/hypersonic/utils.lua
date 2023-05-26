@@ -42,13 +42,20 @@ end
 ---@param char string
 ---@return boolean
 U.is_escape_char = function(char)
-    return string.sub(char, 1,1) == '\\'
+    return string.sub(char, 1, 1) == '\\'
 end
 
 ---@param depth integer
 ---@return string
-U.get_depth = function (depth)
+U.get_depth = function(depth)
     return string.rep('<space>', depth)
+end
+
+---@param s string
+---@param start string
+---@return boolean
+U.starts_with = function(s, start)
+    return string.sub(s, 1, #start) == start
 end
 
 return U

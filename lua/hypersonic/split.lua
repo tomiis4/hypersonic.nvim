@@ -4,7 +4,7 @@ local U = require('utils')
 ---@param str string
 ---@return table
 S.split = function(str)
-    local main = {}
+    local main = {{'Regex', str}}
     local depth = 0
     local escape_char = false
 

@@ -56,7 +56,13 @@ end
 ---@param result_tbl table
 ---@return table
 M.explain = function(tbl, result_tbl)
-    for _, v in pairs(tbl) do
+    if result_tbl[1] == nil then
+        result_tbl = {tbl[1]}
+    end
+
+    for idx = 2, #tbl do
+        local v = tbl[idx]
+
         if type(v) == 'table' then
             -- if is table, check if is it class -> explain class, group -> explain normal
             if v[1] == '#CLASS' then
@@ -65,7 +71,12 @@ M.explain = function(tbl, result_tbl)
                 table.insert(result_tbl, M.explain(v, {}))
             end
         elseif v ~= '#CLASS' and v ~= '#GROUP' then
-            table.insert(result_tbl, { v, explain_char(v) })
+            local explained = explain_char(v)
+
+            if explained == T.special_table['-'] then
+                explained = "Match -"
+            end
+            table.insert(result_tbl, { v, explained })
         end
     end
 
