@@ -15,7 +15,7 @@ Note: Hypersonic is currently under development and is not ready for immediate u
 
 <hr>
 
-<h3 align="center"> Img preview </h3>
+<h3 align="center"> image preview </h3>
 
 <hr>
 
