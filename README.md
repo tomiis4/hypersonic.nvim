@@ -276,9 +276,11 @@ local meta_table = {
 ```lua
 {
     {'Regex',  'gr[ae]y'},
-    {'gr',     'Begins with "gr"'},
-    {'[ae]',   '<space>Followed by either "a" or "e"'},
-    {'y',      'Ends with "y"'}
+    {'gr',     'Match "gr'},
+    {'[ae]',   'Match either', 
+        {'a', 'y'},
+    },
+    {'y',      'Match "y"'}
 }
 ```
 
@@ -287,13 +289,15 @@ local meta_table = {
 <details>
 <summary> NeoVim output </summary>
 
-```c
+```js
 +-------------------------------------------+
 | Regex: gr[ae]y                            |
 |-------------------------------------------+
-| gr:   Begins with "gr"                    |
-| [ae]: Followed by either "a" or "e"       |
-| y:    Ends with "y"                       |
+| gr:   Match "gr"                          |
+| [ae]: Match either                        |
+|    1) "a"                                 |
+|    2) "y"                                 |
+| y:    Match with "y"                      |
 +-------------------------------------------+
 ```
 

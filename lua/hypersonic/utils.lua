@@ -58,4 +58,11 @@ U.starts_with = function(s, start)
     return string.sub(s, 1, #start) == start
 end
 
+---@param s string
+---@param ends string
+---@return boolean
+U.ends_with = function(s, ends)
+    return ends == "" or string.sub(s, -#ends) == ends
+end
+
 return U

@@ -1,23 +1,81 @@
+--[[
+
+FIXME
+    -> insert_exlp, if it ends with or still insert, everytime
+
+SOLUTION
+    - loop trough `input` without `idx=1` (title) and add it to `merged`
+    - make `temp` table, (1 = key, 2 = value)
+    - 
+
+    -> ab|x
+        => ab|x Match either
+            => 1) "ab"
+            => 2) "x"
+
+        {
+            "ab|x"
+            "Match either",
+            {
+                "ab",
+                "x"
+            }
+        }
+
+        +--------------------------+
+        | "ab|x"                   |
+        |    Match either          |   
+        |       1) "ab"            |
+        |       2) "x"             |
+        +--------------------------+
+
+-- ]]
+
 local E = require('explain')
 local U = require('utils')
 local S = require('split')
 local T = require('tables')
 local M = {}
 
----@param str string
----@param expr string
+---@param temp2 string
+---@param v1 string
 ---@return string
-local function insert_exlp(str, expr)
-    if str == '' then
-        return 'Match "' .. expr .. '"'
+local function insert_exlp(temp2, v1)
+    if temp2 == '' then
+        return 'Match "' .. v1 .. '"'
     else
-        -- if is last element match
-        if string.sub(str, #str, #str) == '"' then
-            return string.sub(str, 1, #str - 1) .. expr .. '"'
+        -- if is last element " 
+        if U.ends_with(temp2, '"') then
+            return string.sub(temp2, 1, #temp2 - 1) .. v1 .. '"'
         else
             return ''
         end
     end
+end
+
+---@param merged table
+---@param temp table
+---@return table
+local function clear(merged, temp)
+    if temp[1] ~= '' then
+        table.insert(merged, temp)
+    end
+
+    return merged
+end
+
+---@param merged table
+---@param temp table
+---@param v table
+---@return table
+---@return table
+local function merge_special(merged, temp, v)
+    if v[2] == T.special_table['|'] then
+        temp[1] = temp[1]..'|'
+        temp[2] = 'Match either' .. string.sub(temp[2], #'Match ', #temp[2]) .. ' or '
+    end
+
+    return merged, temp
 end
 
 ---@param tbl table
@@ -35,37 +93,33 @@ M.merge = function(tbl, merged, depth)
 
 
         if v[1][2] == "#CLASS" then
-            -- TODO
-            if temp[1] ~= '' then
-                table.insert(merged, temp)
-                temp = { '', '' }
-            end
+            -- classes
+            print('Class')
+            merged = clear(merged, temp)
+            temp = { '', '' }
         elseif v[1][2] ~= nil then
-            -- TODO
-            if temp[1] ~= '' then
-                table.insert(merged, temp)
-                temp = { '', '' }
-            end
+            -- groups
+            print('Group')
+            merged = clear(merged, temp)
+            temp = { '', '' }
         elseif U.starts_with(v[2], 'Match') then
             temp[1] = temp[1] .. v[1]
             temp[2] = insert_exlp(temp[2], v[1])
-        elseif T.special_table[v[1]] ~= nil then
-            -- TODO
-            print('Special')
+        elseif T.special_table[v[1]] ~= nil then -- maybe add `or v[1] == ''`
+            -- special characters, ?+*|
+            merged, temp = merge_special(merged, temp, v)
         else
-            if temp[1] ~= '' then
-                table.insert(merged, temp)
-                temp = { '', '' }
-            end
+            -- characters like Escaped chars., sol/eol
+            print('Others')
+            merged = clear(merged, temp)
+            temp = { '', '' }
 
             table.insert(merged, v)
         end
     end
 
-    if temp[1] ~= '' then
-        table.insert(merged, temp)
-        temp = { '', '' }
-    end
+    merged = clear(merged, temp)
+    temp = { '', '' }
 
     U.print_table(merged, 0)
 end
