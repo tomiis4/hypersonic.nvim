@@ -289,7 +289,7 @@ local meta_table = {
 <details>
 <summary> NeoVim output </summary>
 
-```js
+```
 +-------------------------------------------+
 | Regex: gr[ae]y                            |
 |-------------------------------------------+
@@ -303,6 +303,24 @@ local meta_table = {
 
 </details>
 
+
+---
+- loop trough `input` without `idx=1` (title) and add it to `merged`
+- each input is `v`, (1 = key, 2 = explanation)
+- make `temp` table, (1 = key, 2 = value, 3 = second data)
+---
+- if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is nil
+    - if `v2` is escaped (starts with `Match escaped`)
+        - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
+            - put it to `temp3`, and push to `temp3` `v2`
+    - if `v2` is normal (starts with `Match "`)
+        - add `v1` to idx1, from `temp2` remove last (") and add `v1 + "`
+    - if `v2` is `or`
+        - from `temp2` replace `Match` with `Match either`,
+        - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
+            - put it to `temp3`, and push to `temp3` `v2`
+
+---
 ---
 - TODO
     - [ ] Figure out what to do with classes
@@ -320,6 +338,7 @@ local meta_table = {
     - if is `temp_expl` not empty, push it to new explanation
     - make it empty and push special explanation
 - if is recursively, `depth++`
+---
 
 </details>
 

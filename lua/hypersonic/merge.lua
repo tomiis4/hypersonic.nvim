@@ -5,8 +5,19 @@ FIXME
 
 SOLUTION
     - loop trough `input` without `idx=1` (title) and add it to `merged`
-    - make `temp` table, (1 = key, 2 = value)
-    - 
+    - each input is `v`, (1 = key, 2 = explanation)
+    - make `temp` table, (1 = key, 2 = value, 3 = second data)
+
+    - if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is nil
+        - if `v2` is escaped (starts with `Match escaped`)
+            - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
+                - put it to `temp3`, and push to `temp3` `v2`
+        - if `v2` is normal (starts with `Match "`)
+            - add `v1` to idx1, from `temp2` remove last (") and add `v1 + "`
+        - if `v2` is `or`
+            - from `temp2` replace `Match` with `Match either`,
+            - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
+                - put it to `temp3`, and push to `temp3` `v2`
 
     -> ab|x
         => ab|x Match either
@@ -24,7 +35,7 @@ SOLUTION
 
         +--------------------------+
         | "ab|x"                   |
-        |    Match either          |   
+        |    Match either          |
         |       1) "ab"            |
         |       2) "x"             |
         +--------------------------+
@@ -44,7 +55,7 @@ local function insert_exlp(temp2, v1)
     if temp2 == '' then
         return 'Match "' .. v1 .. '"'
     else
-        -- if is last element " 
+        -- if is last element "
         if U.ends_with(temp2, '"') then
             return string.sub(temp2, 1, #temp2 - 1) .. v1 .. '"'
         else
@@ -71,7 +82,7 @@ end
 ---@return table
 local function merge_special(merged, temp, v)
     if v[2] == T.special_table['|'] then
-        temp[1] = temp[1]..'|'
+        temp[1] = temp[1] .. '|'
         temp[2] = 'Match either' .. string.sub(temp[2], #'Match ', #temp[2]) .. ' or '
     end
 
