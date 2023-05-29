@@ -305,20 +305,31 @@ local meta_table = {
 
 
 ---
+Todo
+    - class
+    - groups
+---
 - loop trough `input` without `idx=1` (title) and add it to `merged`
 - each input is `v`, (1 = key, 2 = explanation)
 - make `temp` table, (1 = key, 2 = value, 3 = second data)
 ---
 - if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is nil
+    - add to `temp1` all
     - if `v2` is escaped (starts with `Match escaped`)
         - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
-            - put it to `temp3`, and push to `temp3` `v2`
+            - put it to `temp3`, and push `v2` to `temp3`
     - if `v2` is normal (starts with `Match "`)
         - add `v1` to idx1, from `temp2` remove last (") and add `v1 + "`
     - if `v2` is `or`
         - from `temp2` replace `Match` with `Match either`,
         - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
-            - put it to `temp3`, and push to `temp3` `v2`
+            - put it to `temp3`, and push `v2` to `temp3`
+        - to `temp3` add new empty string
+- if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is not nil (table)
+    - FIXME: Fix v1, because if like escaped characers
+    - if is `temp2` "Match either"
+        - if last element of `temp3` is empty string add `v1` to it
+        - if last element is not empty string, connect it with `v1`
 
 ---
 ---
