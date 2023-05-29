@@ -3,29 +3,13 @@
 FIXME
     -> insert_exlp, if it ends with or still insert, everytime
 
-SOLUTION
-    - loop trough `input` without `idx=1` (title) and add it to `merged`
-    - each input is `v`, (1 = key, 2 = explanation)
-    - make `temp` table, (1 = key, 2 = value, 3 = second data)
-
-    - if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is nil
-        - if `v2` is escaped (starts with `Match escaped`)
-            - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
-                - put it to `temp3`, and push to `temp3` `v2`
-        - if `v2` is normal (starts with `Match "`)
-            - add `v1` to idx1, from `temp2` remove last (") and add `v1 + "`
-        - if `v2` is `or`
-            - from `temp2` replace `Match` with `Match either`,
-            - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
-                - put it to `temp3`, and push to `temp3` `v2`
-
     -> ab|x
         => ab|x Match either
             => 1) "ab"
             => 2) "x"
 
         {
-            "ab|x"
+            "ab|x",
             "Match either",
             {
                 "ab",
