@@ -18,7 +18,7 @@ S.split = function(str)
             U.insert(main, depth, { label })
             depth = depth + 1
 
-         -- end groups
+        -- end groups
         elseif (char == ']' or char == ')') and not escape_char then
             depth = depth - 1
 

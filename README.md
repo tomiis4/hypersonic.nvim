@@ -276,7 +276,7 @@ local meta_table = {
 ```lua
 {
     {'Regex',  'gr[ae]y'},
-    {'gr',     'Match "gr'},
+    {'gr',     'Match gr'},
     {'[ae]',   'Match either', 
         {'a', 'y'},
     },
@@ -305,7 +305,7 @@ local meta_table = {
 
 
 ---
-Todo
+- Todo
     - class
     - groups
 ---
@@ -314,7 +314,6 @@ Todo
 - make `temp` table, (1 = key, 2 = value, 3 = second data)
 ---
 - if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is nil
-    - add to `temp1` all
     - if `v2` is escaped (starts with `Match escaped`)
         - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
             - put it to `temp3`, and push `v2` to `temp3`
@@ -326,10 +325,16 @@ Todo
             - put it to `temp3`, and push `v2` to `temp3`
         - to `temp3` add new empty string
 - if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is not nil (table)
-    - FIXME: Fix v1, because if like escaped characers
+    <!--
+        # Why i wrote this?
+        - FIXME: Fix v1, because if like escaped characers 
+    -->
     - if is `temp2` "Match either"
-        - if last element of `temp3` is empty string add `v1` to it
-        - if last element is not empty string, connect it with `v1`
+        - if last element of `temp3` is empty string add `v2` to it
+        - if last element is not empty string,
+            - if is normal (starts with `Match "`)
+                - connect it with `v1`
+            - else connect to last string `\n` + `v2`
 
 ---
 ---
