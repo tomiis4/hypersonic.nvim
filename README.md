@@ -306,6 +306,7 @@ local meta_table = {
 
 ---
 - Todo
+    - fix _if `temp2` is norma_, because of the escaped/groups/class/special
     - class
     - groups
 ---
@@ -325,17 +326,13 @@ local meta_table = {
             - put it to `temp3`, and push `v2` to `temp3`
         - to `temp3` add new empty string
 - if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is not nil (table)
-    <!--
-        # Why i wrote this?
-        - FIXME: Fix v1, because if like escaped characers 
-    -->
     - if is `temp2` "Match either"
         - if last element of `temp3` is empty string add `v2` to it
         - if last element is not empty string,
             - if is normal (starts with `Match "`)
                 - connect it with `v1`
             - else connect to last string `\n` + `v2`
-
+ 
 ---
 ---
 - TODO
