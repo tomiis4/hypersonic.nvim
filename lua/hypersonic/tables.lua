@@ -8,7 +8,8 @@ T.test_inputs = {
     '^[a-zA-Z|]+$',
     '^\\S+$',
     'x(y(\\d+)\\()',
-    'ac|x'
+    'ac|x',
+    'ab\\(',
 }
 
 T.char_table = {

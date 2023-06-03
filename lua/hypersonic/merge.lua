@@ -147,17 +147,30 @@ M.merge = function(tbl, merged)
 
     for idx = 2, #tbl do
         local v = tbl[idx]
-        local is_temp_normal = U.starts_with(temp[2], 'Match ') and U.ends_with(temp[2], '"')
+        -- local is_temp_normal = U.starts_with(temp[2], 'Match ') and U.ends_with(temp[2], '"')
+        local is_temp_normal = true
 
-        if temp[3][1] == nil and is_temp_normal then
+        if is_temp_normal then
+            local is_escaped = U.starts_with(v[1], '\\')
+            local is_normal = U.starts_with(v[2], 'Match "')
+
+            if temp[3][1] == nil then
+                if is_escaped then
+                    U.print_table(temp)
+                    temp[2] = string.sub(temp[2], 1, #temp[2]-1)
+                    U.print_table(temp)
+                end
+            end
         end
     end
+
+    table.insert(merged, {temp[1], temp[2]})
 
     U.print_table(merged, 0)
     return merged
 end
 
-local idx = 8
+local idx = 9
 local split_tbl = S.split(T.test_inputs[idx])
 local expl_tbl = E.explain(split_tbl, {})
 
