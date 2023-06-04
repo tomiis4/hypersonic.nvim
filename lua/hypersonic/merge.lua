@@ -25,7 +25,6 @@ FIXME
         +--------------------------+
 
 -- ]]
-
 -- local E = require('explain')
 -- local U = require('utils')
 -- local S = require('split')
@@ -129,7 +128,6 @@ FIXME
 
 -- return M
 
-
 local E = require('explain')
 local U = require('utils')
 local S = require('split')
@@ -140,31 +138,40 @@ local M = {}
 ---@param merged table
 ---@return table
 M.merge = function(tbl, merged)
-    local temp = {'', '', {}}
+    local temp = { '', '', {} }
 
     -- add title
     merged = { tbl[1] }
 
     for idx = 2, #tbl do
         local v = tbl[idx]
-        -- local is_temp_normal = U.starts_with(temp[2], 'Match ') and U.ends_with(temp[2], '"')
-        local is_temp_normal = true
+        -- local is_temp_normal = U.starts_with(temp[2], 'Match ') and U.ends_with(temp[2], tmep[1])
+        local is_temp_normal = type(v[1]) ~= "table"
 
         if is_temp_normal then
             local is_escaped = U.starts_with(v[1], '\\')
-            local is_normal = U.starts_with(v[2], 'Match "')
+            local is_normal = U.starts_with(v[2], 'Match ' .. v[1])
 
             if temp[3][1] == nil then
                 if is_escaped then
-                    U.print_table(temp)
-                    temp[2] = string.sub(temp[2], 1, #temp[2]-1)
-                    U.print_table(temp)
+                    local removed_temp = string.gsub(temp[2], 'Match ', '')
+                    local removed_v = string.gsub(v[2], 'Match ', '')
+
+                    table.insert(temp[3], removed_temp)
+                    table.insert(temp[3], removed_v)
+
+                    temp[2] = 'Match'
+                end
+
+                if is_normal then
+                    temp[2] = temp[2] .. v[1]
                 end
             end
         end
+        temp[1] = temp[1] .. v[1]
     end
 
-    table.insert(merged, {temp[1], temp[2]})
+    table.insert(merged, temp)
 
     U.print_table(merged, 0)
     return merged
@@ -176,3 +183,4 @@ local expl_tbl = E.explain(split_tbl, {})
 
 M.merge(expl_tbl, {})
 return M
+
