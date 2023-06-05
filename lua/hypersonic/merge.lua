@@ -1,30 +1,3 @@
---[[
-
-FIXME
-    -> insert_exlp, if it ends with or still insert, everytime
-
-    -> ab|x
-        => ab|x Match either
-            => 1) "ab"
-            => 2) "x"
-
-        {
-            "ab|x",
-            "Match either",
-            {
-                "ab",
-                "x"
-            }
-        }
-
-        +--------------------------+
-        | "ab|x"                   |
-        |    Match either          |
-        |       1) "ab"            |
-        |       2) "x"             |
-        +--------------------------+
-
--- ]]
 local E = require('explain')
 local U = require('utils')
 local S = require('split')
@@ -65,7 +38,7 @@ M.merge = function(tbl, merged)
                     temp[2] = temp[2] .. v[1]
                 end
 
-
+                -- FIXME
                 if v[2] == 'or' then
                     local removed_temp = string.gsub(temp[2], 'Match ', '')
 
@@ -101,7 +74,6 @@ M.merge = function(tbl, merged)
     return merged
 end
 
--- local idx = 10
 local idx = 8
 local split_tbl = S.split(T.test_inputs[idx])
 local expl_tbl = E.explain(split_tbl, {})
