@@ -45,6 +45,7 @@ M.merge = function(tbl, merged)
         -- local is_temp_normal = U.starts_with(temp[2], 'Match ') and U.ends_with(temp[2], tmep[1])
         local is_temp_normal = type(v[1]) ~= "table"
 
+        -- FIXME special_table
         if is_temp_normal then
             local is_char_escaped = U.starts_with(v[1], '\\')
             local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1])
@@ -76,7 +77,19 @@ M.merge = function(tbl, merged)
             end
 
             if temp[3][1] ~= nil then
-                -- TODO
+                -- FIXME: DRY
+                -- if is_char_escaped then
+                --     local removed_v = string.gsub(v[2], 'Match ', '')
+                --
+                --     if temp[2] == 'Match either' then
+                --         if temp[3][#temp[3]] == '' then
+                --             temp[3][#temp[3]] = removed_v
+                --         else
+                --             temp[3][#temp[3]] = temp[3][#temp[3]] .. '<br>' .. removed_v
+                --         end
+                --     end
+                --
+                -- end
             end
         end
         temp[1] = temp[1] .. v[1]
