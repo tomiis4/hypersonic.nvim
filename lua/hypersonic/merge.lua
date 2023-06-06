@@ -15,6 +15,7 @@ M.merge = function(tbl, merged)
 
     for idx = 2, #tbl do
         local v = tbl[idx]
+        -- aka is not group/class
         -- local is_temp_normal = U.starts_with(temp[2], 'Match ') and U.ends_with(temp[2], tmep[1])
         local is_temp_normal = type(v[1]) ~= "table"
 
@@ -26,10 +27,8 @@ M.merge = function(tbl, merged)
             if temp[3][1] == nil then
                 if is_char_escaped then
                     local removed_temp = string.gsub(temp[2], 'Match ', '')
-                    local removed_v = string.gsub(v[2], 'Match ', '')
 
                     table.insert(temp[3], removed_temp)
-                    table.insert(temp[3], removed_v)
 
                     temp[2] = 'Match'
                 end
@@ -38,7 +37,6 @@ M.merge = function(tbl, merged)
                     temp[2] = temp[2] .. v[1]
                 end
 
-                -- FIXME
                 if v[2] == 'or' then
                     local removed_temp = string.gsub(temp[2], 'Match ', '')
 
@@ -51,18 +49,19 @@ M.merge = function(tbl, merged)
 
             if temp[3][1] ~= nil then
                 -- FIXME: DRY
-                -- if is_char_escaped then
-                --     local removed_v = string.gsub(v[2], 'Match ', '')
-                --
-                --     if temp[2] == 'Match either' then
-                --         if temp[3][#temp[3]] == '' then
-                --             temp[3][#temp[3]] = removed_v
-                --         else
-                --             temp[3][#temp[3]] = temp[3][#temp[3]] .. '<br>' .. removed_v
-                --         end
-                --     end
-                --
-                -- end
+
+                if temp[2] == 'Match either' then
+                    local removed_v = v[2] == 'or' and '' or string.gsub(v[2], 'Match ', '')
+
+                    if temp[3][#temp[3]] == '' then
+                        temp[3][#temp[3]] = removed_v
+                    else
+                        temp[3][#temp[3]] = temp[3][#temp[3]] .. '<br>' .. removed_v
+                    end
+                elseif temp[2] ~= 'Match either' then
+                    local removed_v = string.gsub(v[2], 'Match ', '')
+                    table.insert(temp[3], removed_v)
+                end
             end
         end
         temp[1] = temp[1] .. v[1]
@@ -74,7 +73,8 @@ M.merge = function(tbl, merged)
     return merged
 end
 
-local idx = 8
+local idx = 9
+--[[ local idx = 10 ]]
 local split_tbl = S.split(T.test_inputs[idx])
 local expl_tbl = E.explain(split_tbl, {})
 

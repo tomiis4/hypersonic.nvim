@@ -1,5 +1,4 @@
 local U = require('utils')
-local S = require('split')
 local T = require('tables')
 local M = {}
 

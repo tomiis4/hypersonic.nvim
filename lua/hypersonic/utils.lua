@@ -8,11 +8,11 @@ U.print_table = function(tbl, n)
 
     print(string.rep('|   ', n) .. '{')
 
-    for i, v in pairs(tbl) do
+    for _, v in pairs(tbl) do
         if type(v) == 'table' then
             U.print_table(v, n + 1)
         else
-            print(string.rep('|   ', n + 1) .. string.format('[%q]: %q,', i, v))
+            print(string.rep('|   ', n + 1) .. v..',')
         end
     end
     print(string.rep('|   ', n) .. '},')
