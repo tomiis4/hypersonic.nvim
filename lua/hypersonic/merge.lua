@@ -4,6 +4,9 @@ local S = require('split')
 local T = require('tables')
 local M = {}
 
+-- TODO: class, groups, clear temp
+-- FIXME: if is temp3 not nil, each characer is adding on new line
+
 ---@param tbl table
 ---@param merged table
 ---@return table
@@ -15,21 +18,18 @@ M.merge = function(tbl, merged)
 
     for idx = 2, #tbl do
         local v = tbl[idx]
-        -- aka is not group/class
-        -- local is_temp_normal = U.starts_with(temp[2], 'Match ') and U.ends_with(temp[2], tmep[1])
         local is_temp_normal = type(v[1]) ~= "table"
 
-        -- FIXME special_table
         if is_temp_normal then
             local is_char_escaped = U.starts_with(v[1], '\\')
             local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1])
             local is_char_quantifier = U.has_value(T.quantifiers, v[1])
+            local is_char_chartbl = T.char_table[v[1]] ~= nil
 
             if temp[3][1] == nil then
                 if is_char_escaped then
                     local removed_temp = string.gsub(temp[2], 'Match ', '')
 
-                    print(temp[2])
                     if removed_temp ~= '' then
                         table.insert(temp[3], removed_temp)
                     end
@@ -55,21 +55,35 @@ M.merge = function(tbl, merged)
                 end
 
                 if is_char_quantifier then
-                    temp[2] = temp[2] .. ' ' .. T.special_table[v[1]]
+                    local removed_t = string.gsub(T.special_table[v[1]], 'Match', 'and')
+                    temp[2] = temp[2] .. ' ' .. removed_t
+                end
+
+                if is_char_chartbl then
+                    local removed_temp = string.gsub(temp[2], 'Match ', '')
+
+                    if removed_temp ~= '' then
+                        table.insert(temp[3], removed_temp)
+                    end
+
+                    temp[2] = 'Match'
                 end
             end
 
             if temp[3][1] ~= nil or temp[2] == 'Match' then
+                local last_elem = temp[3][#temp[3]]
+
                 if temp[2] == 'Match either' then
                     local removed_v = v[2] == 'or' and '' or string.gsub(v[2], 'Match ', '')
 
-                    if temp[3][#temp[3]] == '' then
+                    if last_elem == '' then
                         temp[3][#temp[3]] = removed_v
                     else
-                        temp[3][#temp[3]] = temp[3][#temp[3]] .. '<br>' .. removed_v
+                        temp[3][#temp[3]] = last_elem .. '<br>' .. removed_v
                     end
                 elseif temp[2] == 'Match' then
                     local removed_v = string.gsub(v[2], 'Match ', '')
+
                     table.insert(temp[3], removed_v)
                 end
             end
@@ -83,10 +97,10 @@ M.merge = function(tbl, merged)
     return merged
 end
 
-local idx = 3
+--[[ local idx = 3 ]]
 --[[ local idx = 6 ]]
---[[ local idx = 10 ]]
-local inp = T.test_inputs[idx]
+local idx = 1
+local inp = '^xy$' or T.test_inputs[idx]
 local split_tbl = S.split(inp)
 local expl_tbl = E.explain(split_tbl, {})
 
