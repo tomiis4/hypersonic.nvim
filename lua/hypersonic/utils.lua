@@ -12,7 +12,7 @@ U.print_table = function(tbl, n)
         if type(v) == 'table' then
             U.print_table(v, n + 1)
         else
-            print(string.rep('|   ', n + 1) .. v..',')
+            print(string.rep('|   ', n + 1) .. v .. ',')
         end
     end
     print(string.rep('|   ', n) .. '},')
@@ -64,5 +64,19 @@ end
 U.ends_with = function(s, ends)
     return ends == "" or string.sub(s, -#ends) == ends
 end
+
+---@param tbl table
+---@param v any
+---@return boolean
+U.has_value = function(tbl, v)
+    for _, v1 in ipairs(tbl) do
+        if v1 == v then
+            return true
+        end
+    end
+
+    return false
+end
+
 
 return U

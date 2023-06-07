@@ -23,18 +23,26 @@ M.merge = function(tbl, merged)
         if is_temp_normal then
             local is_char_escaped = U.starts_with(v[1], '\\')
             local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1])
+            local is_char_quantifier = U.has_value(T.quantifiers, v[1])
 
             if temp[3][1] == nil then
                 if is_char_escaped then
                     local removed_temp = string.gsub(temp[2], 'Match ', '')
 
-                    table.insert(temp[3], removed_temp)
+                    print(temp[2])
+                    if removed_temp ~= '' then
+                        table.insert(temp[3], removed_temp)
+                    end
 
                     temp[2] = 'Match'
                 end
 
                 if is_char_normal then
-                    temp[2] = temp[2] .. v[1]
+                    if temp[2] == '' then
+                        temp[2] = temp[2] .. v[2]
+                    else
+                        temp[2] = temp[2] .. v[1]
+                    end
                 end
 
                 if v[2] == 'or' then
@@ -45,11 +53,13 @@ M.merge = function(tbl, merged)
 
                     temp[2] = 'Match either'
                 end
+
+                if is_char_quantifier then
+                    temp[2] = temp[2] .. ' ' .. T.special_table[v[1]]
+                end
             end
 
-            if temp[3][1] ~= nil then
-                -- FIXME: DRY
-
+            if temp[3][1] ~= nil or temp[2] == 'Match' then
                 if temp[2] == 'Match either' then
                     local removed_v = v[2] == 'or' and '' or string.gsub(v[2], 'Match ', '')
 
@@ -58,7 +68,7 @@ M.merge = function(tbl, merged)
                     else
                         temp[3][#temp[3]] = temp[3][#temp[3]] .. '<br>' .. removed_v
                     end
-                elseif temp[2] ~= 'Match either' then
+                elseif temp[2] == 'Match' then
                     local removed_v = string.gsub(v[2], 'Match ', '')
                     table.insert(temp[3], removed_v)
                 end
@@ -73,9 +83,11 @@ M.merge = function(tbl, merged)
     return merged
 end
 
-local idx = 9
+local idx = 3
+--[[ local idx = 6 ]]
 --[[ local idx = 10 ]]
-local split_tbl = S.split(T.test_inputs[idx])
+local inp = T.test_inputs[idx]
+local split_tbl = S.split(inp)
 local expl_tbl = E.explain(split_tbl, {})
 
 M.merge(expl_tbl, {})
