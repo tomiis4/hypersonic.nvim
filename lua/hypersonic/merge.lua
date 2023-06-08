@@ -81,6 +81,10 @@ M.merge = function(tbl, merged)
                     else
                         temp[3][#temp[3]] = last_elem .. '<br>' .. removed_v
                     end
+                elseif v[2] == 'or' then
+                    temp[2] = 'Match either'
+                    temp[3] = {table.concat(temp[3], '<br>')}
+                    table.insert(temp[3], '')
                 elseif temp[2] == 'Match' then
                     local removed_v = string.gsub(v[2], 'Match ', '')
 
@@ -100,7 +104,7 @@ end
 --[[ local idx = 3 ]]
 --[[ local idx = 6 ]]
 local idx = 1
-local inp = '^xy$' or T.test_inputs[idx]
+local inp = '^xy|fck' or T.test_inputs[idx]
 local split_tbl = S.split(inp)
 local expl_tbl = E.explain(split_tbl, {})
 

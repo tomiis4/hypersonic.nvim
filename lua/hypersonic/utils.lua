@@ -78,5 +78,17 @@ U.has_value = function(tbl, v)
     return false
 end
 
+---@param s string
+---@param sep string
+---@return table
+U.split = function(s, sep)
+    local t = {}
+
+    for v in string.gmatch(s, "([^" .. sep .. "]+)") do
+        table.insert(t, v)
+    end
+
+    return t
+end
 
 return U
