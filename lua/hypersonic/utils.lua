@@ -80,15 +80,21 @@ end
 
 ---@param s string
 ---@param sep string
----@return table
+---@return table, integer
 U.split = function(s, sep)
     local t = {}
+    local n = 0
 
-    for v in string.gmatch(s, "([^" .. sep .. "]+)") do
-        table.insert(t, v)
+    if s == nil then
+        return {}, 0
     end
 
-    return t
+    for v in string.gmatch(s .. sep, "(.-)" .. sep) do
+        table.insert(t, v)
+        n = n + 1
+    end
+
+    return t, n
 end
 
 return U
