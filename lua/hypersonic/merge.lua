@@ -5,8 +5,9 @@ local T = require('tables')
 local M = {}
 
 -- TODO: class, groups, clear temp
--- TODO: optimize fix_temp and do it same for escaped
+-- TODO: optimize fix_temp and do it same for escaped, any
 
+--- FIXME: 2 escaped next to each other does not add <br>
 ---@param temp table
 ---@return table
 local function fix_temp(temp)
@@ -138,7 +139,7 @@ end
 --[[ local idx = 3 ]]
 --[[ local idx = 6 ]]
 local idx = 1
-local inp = '^xy|f\\Sckyou' or T.test_inputs[idx]
+local inp = '\\S\\n|\\p\\P' or T.test_inputs[idx]
 local split_tbl = S.split(inp)
 local expl_tbl = E.explain(split_tbl, {})
 
