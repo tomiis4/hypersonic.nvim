@@ -1,6 +1,6 @@
-local E = require('explain')
+local explain = require('explain').explain
 local U = require('utils')
-local S = require('split')
+local split_regex = require('split').split_regex
 local T = require('tables')
 local M = {}
 
@@ -20,8 +20,8 @@ local function fix_temp(temp)
         for _, v1 in pairs(s) do
             local split_t, t_n = U.split(t[idx], '<br>')
 
-            local _, n_t = string.gsub(split_t[t_n] or '', ' ', ' ')
-            local _, n_v = string.gsub(v1 or '', ' ', ' ')
+            local _, n_t = (split_t[t_n] or ''):gsub(' ', ' ')
+            local _, n_v = (v1 or ''):gsub(' ', ' ')
 
 
             if n_t < 2 and n_v < 2 then
@@ -33,7 +33,7 @@ local function fix_temp(temp)
 
         -- fix <br> at start
         if U.starts_with(t[idx], '<br>') then
-            t[idx] = string.sub(t[idx], 5)
+            t[idx] = t[idx]:sub(5)
         end
     end
 
@@ -61,7 +61,7 @@ M.merge = function(tbl, merged)
 
             if temp[3][1] == nil then
                 if is_char_escaped then
-                    local removed_temp = string.gsub(temp[2], 'Match ', '')
+                    local removed_temp = temp[2]:gsub('Match ', '')
 
                     if removed_temp ~= '' then
                         table.insert(temp[3], removed_temp)
@@ -79,7 +79,7 @@ M.merge = function(tbl, merged)
                 end
 
                 if v[2] == 'or' then
-                    local removed_temp = string.gsub(temp[2], 'Match ', '')
+                    local removed_temp = temp[2]:gsub('Match ', '')
 
                     table.insert(temp[3], removed_temp)
                     table.insert(temp[3], '')
@@ -88,12 +88,12 @@ M.merge = function(tbl, merged)
                 end
 
                 if is_char_quantifier then
-                    local removed_t = string.gsub(T.special_table[v[1]], 'Match', 'and')
+                    local removed_t = T.special_table[v[1]]:gsub('Match', 'and')
                     temp[2] = temp[2] .. ' ' .. removed_t
                 end
 
                 if is_char_chartbl then
-                    local removed_temp = string.gsub(temp[2], 'Match ', '')
+                    local removed_temp = temp[2]:gsub('Match ', '')
 
                     if removed_temp ~= '' then
                         table.insert(temp[3], removed_temp)
@@ -107,7 +107,7 @@ M.merge = function(tbl, merged)
                 local last_elem = temp[3][#temp[3]]
 
                 if temp[2] == 'Match either' then
-                    local removed_v = v[2] == 'or' and '' or string.gsub(v[2], 'Match ', '')
+                    local removed_v = v[2] == 'or' and '' or v[2]:gsub('Match ', '')
 
                     if last_elem == '' then
                         temp[3][#temp[3]] = removed_v
@@ -119,7 +119,7 @@ M.merge = function(tbl, merged)
                     temp[3] = { table.concat(temp[3], '<br>') }
                     table.insert(temp[3], '')
                 elseif temp[2] == 'Match' then
-                    local removed_v = string.gsub(v[2], 'Match ', '')
+                    local removed_v = v[2]:gsub('Match ', '')
 
                     table.insert(temp[3], removed_v)
                 end
@@ -140,8 +140,8 @@ end
 --[[ local idx = 6 ]]
 local idx = 1
 local inp = '\\S\\n|\\p\\P' or T.test_inputs[idx]
-local split_tbl = S.split(inp)
-local expl_tbl = E.explain(split_tbl, {})
+local split_tbl = split_regex(inp)
+local expl_tbl = explain(split_tbl, {})
 
 M.merge(expl_tbl, {})
 return M

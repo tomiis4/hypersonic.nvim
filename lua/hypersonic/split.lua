@@ -1,15 +1,18 @@
 local S = {}
 local U = require('utils')
 
+---split regex to specific table
 ---@param str string
 ---@return table
-S.split = function(str)
+function S.split_regex(str)
     local main = {{'Regex', str}}
     local depth = 0
     local escape_char = false
 
-    for i = 1, #str do
-        local char = string.sub(str, i, i)
+    local str_len = #str
+
+    for i = 1, str_len do
+        local char = str:sub(i, i)
 
         -- get groups
         if (char == '[' or char == '(') and not escape_char then
