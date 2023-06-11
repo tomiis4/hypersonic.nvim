@@ -1,9 +1,9 @@
 local U = {}
 
 ---@param tbl table
----@param n number
+---@param n number? number of indents (default 0)
 ---@return nil
-U.print_table = function(tbl, n)
+function U.print_table(tbl, n)
     n = n or 0
 
     print(string.rep('|   ', n) .. '{')
@@ -18,11 +18,12 @@ U.print_table = function(tbl, n)
     print(string.rep('|   ', n) .. '},')
 end
 
+---insert element to specific depth
 ---@param tbl table
 ---@param ctx table|string
 ---@param depth number
 ---@return table
-U.insert = function(tbl, depth, ctx)
+function U.insert(tbl, depth, ctx)
     local last_item = tbl
 
     -- if is last item of LAST_ITEM table, set it as last item, else make new table with idx+
@@ -41,34 +42,27 @@ end
 
 ---@param char string
 ---@return boolean
-U.is_escape_char = function(char)
+function U.is_escape_char(char)
     return string.sub(char, 1, 1) == '\\'
 end
 
 ---@param depth integer
 ---@return string
-U.get_depth = function(depth)
+function U.get_depth(depth)
     return string.rep('<space>', depth)
 end
 
 ---@param s string
 ---@param start string
 ---@return boolean
-U.starts_with = function(s, start)
+function U.starts_with(s, start)
     return string.sub(s, 1, #start) == start
-end
-
----@param s string
----@param ends string
----@return boolean
-U.ends_with = function(s, ends)
-    return ends == "" or string.sub(s, -#ends) == ends
 end
 
 ---@param tbl table
 ---@param v any
 ---@return boolean
-U.has_value = function(tbl, v)
+function U.has_value(tbl, v)
     for _, v1 in ipairs(tbl) do
         if v1 == v then
             return true
@@ -81,7 +75,7 @@ end
 ---@param s string
 ---@param sep string
 ---@return table, integer
-U.split = function(s, sep)
+function U.split(s, sep)
     local t = {}
     local n = 0
 
