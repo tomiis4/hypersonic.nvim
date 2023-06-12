@@ -5,39 +5,71 @@ local T = require('tables')
 local M = {}
 
 -- TODO: class, groups, clear temp
--- TODO: optimize fix_temp and do it same for escaped, any
 
---- FIXME: 2 escaped next to each other does not add <br>
 ---@param temp table
+---@param type 'Match'|'Match either'|''
 ---@return table
-local function fix_temp(temp)
-    local t = {}
+local function concat_temp(temp, type)
+    local res = {}
+    local n_loop = type == 'Match' and 1 or #temp
 
-    for idx, v in pairs(temp) do
-        local s = U.split(v, '<br>')
+    for i = 1, n_loop do
+        -- FIXME
+        -- if is type Match, do only temp. Otherwise use splited s
+        local keywords = type == 'Match' and temp or U.split(temp[i], '<br>')
 
+        local temp_res = ''
+        local temp_kw = ''
+        local is_normal = false
+        local is_escaped = false
 
-        for _, v1 in pairs(s) do
-            local split_t, t_n = U.split(t[idx], '<br>')
+        for _, v in pairs(keywords) do
+            if #v == 1 then
+                if is_escaped then
+                    temp_res = temp_res .. '<br>escaped ' .. temp_kw
+                    temp_kw = ''
+                end
 
-            local _, n_t = (split_t[t_n] or ''):gsub(' ', ' ')
-            local _, n_v = (v1 or ''):gsub(' ', ' ')
+                is_normal = true
+                is_escaped = false
+                temp_kw = temp_kw .. v
+            elseif U.starts_with(v, 'escaped') then
+                if is_normal then
+                    print(temp_kw)
+                    temp_res = temp_res .. '<br>' .. temp_kw
+                    temp_kw = ''
+                end
 
+                is_normal = false
+                is_escaped = true
 
-            if n_t < 2 and n_v < 2 then
-                t[idx] = (t[idx] or '') .. v1
+                local replaced = v:gsub('escaped ', '')
+                temp_kw = temp_kw .. replaced
             else
-                t[idx] = (t[idx] or '') .. '<br>' .. v1
+                if is_escaped then
+                    temp_kw = 'escaped ' .. temp_kw
+                end
+
+                is_normal = false
+                is_escaped = false
+
+                temp_res = temp_res .. '<br>' .. temp_kw .. v
+                temp_kw = ''
             end
         end
 
-        -- fix <br> at start
-        if U.starts_with(t[idx], '<br>') then
-            t[idx] = t[idx]:sub(5)
+        if temp_kw ~= '' then
+            if is_escaped then
+                temp_kw = 'escaped ' .. temp_kw
+            end
+
+            temp_res = temp_res .. '<br>' .. temp_kw
         end
+
+        table.insert(res, temp_res:sub(5))
     end
 
-    return t
+    return res
 end
 
 ---@param tbl table
@@ -51,7 +83,7 @@ M.merge = function(tbl, merged)
 
     for idx = 2, #tbl do
         local v = tbl[idx]
-        local is_temp_normal = type(v[1]) ~= "table"
+        local is_temp_normal = type(v[1]) ~= 'table'
 
         if is_temp_normal then
             local is_char_escaped = U.starts_with(v[1], '\\')
@@ -128,7 +160,8 @@ M.merge = function(tbl, merged)
         temp[1] = temp[1] .. v[1]
     end
 
-    temp[3] = fix_temp(temp[3])
+    U.print_table(temp[3])
+    temp[3] = concat_temp(temp[3], temp[2])
 
     table.insert(merged, temp)
 
@@ -138,8 +171,8 @@ end
 
 --[[ local idx = 3 ]]
 --[[ local idx = 6 ]]
-local idx = 1
-local inp = '\\S\\n|\\p\\P' or T.test_inputs[idx]
+local idx = 6
+local inp = T.test_inputs[idx]
 local split_tbl = split_regex(inp)
 local expl_tbl = explain(split_tbl, {})
 
