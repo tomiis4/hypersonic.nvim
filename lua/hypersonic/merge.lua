@@ -6,6 +6,11 @@ local M = {}
 
 -- TODO: class, groups, clear temp
 
+---@class temp
+---@field[1] string regex name
+---@field[2] 'Match'|'Match either'|'' regex explanation
+---@field[3] table further regex explanation
+
 ---@param temp table
 ---@param type 'Match'|'Match either'|''
 ---@return table
@@ -14,7 +19,6 @@ local function concat_temp(temp, type)
     local n_loop = type == 'Match' and 1 or #temp
 
     for i = 1, n_loop do
-        -- FIXME
         -- if is type Match, do only temp. Otherwise use splited s
         local keywords = type == 'Match' and temp or U.split(temp[i], '<br>')
 
@@ -72,10 +76,74 @@ local function concat_temp(temp, type)
     return res
 end
 
+--- FIXME, just run the code, you will see
+---@param tbl table
+---@return table
+local function merge_class(tbl)
+    ---@class temp
+    local temp = { '', '', {} }
+
+    local res = {}
+
+    for idx = 2, #tbl do
+        local v = tbl[idx]
+
+        local is_char_escaped = U.starts_with(v[1], '\\')
+        local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1])
+        local is_char_quantifier = U.has_value(T.quantifiers, v[1])
+        local is_char_chartbl = T.char_table[v[1]] ~= nil
+
+        if #temp[3] == 0 then
+            if is_char_escaped then
+                local removed_temp = temp[2]:gsub('Match ', '')
+
+                if removed_temp ~= '' then
+                    table.insert(temp[3], removed_temp)
+                end
+
+                temp[2] = 'Match'
+            end
+
+            if is_char_normal then
+                temp[2] = temp[2] .. (temp[2] == '' and v[2] or v[1])
+            end
+
+            if v[2] == 'or' then
+                local removed_temp = temp[2]:gsub('Match ', '')
+
+                table.insert(temp[3], removed_temp)
+                table.insert(temp[3], '')
+
+                temp[2] = 'Match either'
+            end
+
+            if is_char_quantifier then
+                local removed_t = T.special_table[v[1]]:gsub('Match', 'and')
+                temp[2] = temp[2] .. ' ' .. removed_t
+            end
+
+            if is_char_chartbl then
+                local removed_temp = temp[2]:gsub('Match ', '')
+
+                if removed_temp ~= '' then
+                    table.insert(temp[3], removed_temp)
+                end
+
+                temp[2] = 'Match'
+            end
+        end
+    end
+
+    U.print_table(temp)
+
+    return res
+end
+
 ---@param tbl table
 ---@param merged table
 ---@return table
 M.merge = function(tbl, merged)
+    ---@class temp
     local temp = { '', '', {} }
 
     -- add title
@@ -83,15 +151,15 @@ M.merge = function(tbl, merged)
 
     for idx = 2, #tbl do
         local v = tbl[idx]
-        local is_temp_normal = type(v[1]) ~= 'table'
+        local is_v_normal = type(v[2]) ~= 'table'
 
-        if is_temp_normal then
+        if is_v_normal then
             local is_char_escaped = U.starts_with(v[1], '\\')
             local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1])
             local is_char_quantifier = U.has_value(T.quantifiers, v[1])
             local is_char_chartbl = T.char_table[v[1]] ~= nil
 
-            if temp[3][1] == nil then
+            if #temp[3] == 0 then
                 if is_char_escaped then
                     local removed_temp = temp[2]:gsub('Match ', '')
 
@@ -103,11 +171,7 @@ M.merge = function(tbl, merged)
                 end
 
                 if is_char_normal then
-                    if temp[2] == '' then
-                        temp[2] = temp[2] .. v[2]
-                    else
-                        temp[2] = temp[2] .. v[1]
-                    end
+                    temp[2] = temp[2] .. (temp[2] == '' and v[2] or v[1])
                 end
 
                 if v[2] == 'or' then
@@ -135,17 +199,13 @@ M.merge = function(tbl, merged)
                 end
             end
 
-            if temp[3][1] ~= nil or temp[2] == 'Match' then
+            if #temp[3] > 0 or temp[2] == 'Match' then
                 local last_elem = temp[3][#temp[3]]
 
                 if temp[2] == 'Match either' then
                     local removed_v = v[2] == 'or' and '' or v[2]:gsub('Match ', '')
 
-                    if last_elem == '' then
-                        temp[3][#temp[3]] = removed_v
-                    else
-                        temp[3][#temp[3]] = last_elem .. '<br>' .. removed_v
-                    end
+                    temp[3][#temp[3]] = last_elem == '' and removed_v or last_elem .. '<br>' .. removed_v
                 elseif v[2] == 'or' then
                     temp[2] = 'Match either'
                     temp[3] = { table.concat(temp[3], '<br>') }
@@ -156,11 +216,15 @@ M.merge = function(tbl, merged)
                     table.insert(temp[3], removed_v)
                 end
             end
+        else
+            -- v is not normal (it's either group or class)
+            if v[1][2] == '#CLASS' then
+                merge_class(v)
+            end
         end
-        temp[1] = temp[1] .. v[1]
+        temp[1] = temp[1] .. (type(v[1]) == 'table' and '' or v[1])
     end
 
-    U.print_table(temp[3])
     temp[3] = concat_temp(temp[3], temp[2])
 
     table.insert(merged, temp)
@@ -169,9 +233,7 @@ M.merge = function(tbl, merged)
     return merged
 end
 
---[[ local idx = 3 ]]
---[[ local idx = 6 ]]
-local idx = 6
+local idx = 4
 local inp = T.test_inputs[idx]
 local split_tbl = split_regex(inp)
 local expl_tbl = explain(split_tbl, {})

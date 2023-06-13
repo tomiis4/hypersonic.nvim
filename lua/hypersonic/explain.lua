@@ -83,7 +83,7 @@ function M.explain(tbl, result_tbl)
 
             -- only class have "-" as range
             if explained_char == T.special_table['-'] then
-                explained_char = "Match -"
+                explained_char = 'Match -'
             end
             table.insert(result_tbl, { v, explained_char })
         end

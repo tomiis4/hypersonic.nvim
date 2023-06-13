@@ -83,7 +83,7 @@ function U.split(s, sep)
         return {}, 0
     end
 
-    for v in string.gmatch(s .. sep, "(.-)" .. sep) do
+    for v in string.gmatch(s .. sep, '(.-)' .. sep) do
         table.insert(t, v)
         n = n + 1
     end
