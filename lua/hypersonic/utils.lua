@@ -59,6 +59,13 @@ function U.starts_with(s, start)
     return string.sub(s, 1, #start) == start
 end
 
+---@param s string
+---@param ending string
+---@return boolean
+function U.ends_with(s, ending)
+    return ending == "" or s:sub(-#ending) == ending
+end
+
 ---@param tbl table
 ---@param v any
 ---@return boolean
