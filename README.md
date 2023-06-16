@@ -31,10 +31,10 @@ Note: Hypersonic is currently under development and is not ready for immediate u
 ## Currently accessible
 - Simple RegExp explaining
 
-## Language support
-- [ ] JavaScript
-- [ ] Lua
-
+## Known issues
+- Advanced regex is not working (e.g. `(?:)`)
+- Works only for correctly written regex.
+- Lua regex is not supported
 
 ## Installation
 
