@@ -18,6 +18,7 @@ local function explain_char(char)
 end
 
 
+--- class have only normal/escaped characters, ranges, except
 ---@param tbl table
 ---@return table
 local function explain_class(tbl)
@@ -36,6 +37,11 @@ local function explain_class(tbl)
             if explained_char == T.char_table['^'] then
                 local expl = idx == 1 and 'Match except' or 'Match ^'
                 explained_char = expl
+            end
+
+            -- class does not have quantifiers
+            if U.has_value(T.quantifiers, v) then
+                explained_char = 'Match '..v
             end
 
             -- if is "-" last element, it does not mean range
