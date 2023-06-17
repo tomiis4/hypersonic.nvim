@@ -4,7 +4,7 @@ local split_regex = require('split').split_regex
 local T = require('tables')
 local M = {}
 
--- TODO: class, groups, clear temp
+-- TODO: groups, clear temp
 
 ---@alias regex_type 'Match'|'Match either'|''
 
@@ -78,15 +78,38 @@ local function concat_temp(temp, type)
     return res
 end
 
---- FIXME: in explain, class does not have any quantifiers
---- FIXME, just run the code, you will see
+---@param tbl table
+---@return table
+local function concat_temp_class(tbl)
+    local res = {}
+    local temp = ''
+
+    for _, v1 in pairs(tbl) do
+        local v = U.ends_with(v1, '<br>') and v1:sub(0, -5) or v1
+
+        if #v == 1 then
+            temp = temp .. (temp:find(v) and '' or v)
+        else
+            if temp ~= '' then
+                table.insert(res, 'one chacacter from ' .. temp)
+                temp = ''
+            end
+            table.insert(res, v)
+        end
+    end
+
+    if temp ~= '' then
+        table.insert(res, 'one chacacter from list ' .. temp)
+    end
+
+    return res
+end
+
 ---@param tbl table
 ---@return table
 local function merge_class(tbl)
     ---@class temp
     local temp = { '', '', {} }
-
-    local res = {}
 
     for idx = 2, #tbl do
         local v = tbl[idx]
@@ -120,7 +143,6 @@ local function merge_class(tbl)
                 table.insert(temp[3], '')
 
                 temp[2] = 'Match either'
-                U.print_table(temp[3])
             end
         end
 
@@ -131,7 +153,7 @@ local function merge_class(tbl)
                 local removed_v = v[2] == 'or' and '' or v[2]:gsub('Match ', '')
                 local add_br = U.ends_with(last_elem, ' to ') and '' or '<br>'
 
-                temp[3][#temp[3]] = last_elem == '' and removed_v or last_elem .. add_br .. removed_v
+                temp[3][#temp[3]] = last_elem == '' and removed_v or (last_elem .. add_br .. removed_v)
             end
 
             if v[2] == 'to' then
@@ -139,9 +161,12 @@ local function merge_class(tbl)
             end
 
             if v[2] == 'or' then
+                temp[3] = temp[2] == 'Match' and { table.concat(temp[3], '<br>') } or temp[3]
                 temp[2] = 'Match either'
-                temp[3] = { table.concat(temp[3], '') }
-                table.insert(temp[3], '')
+
+                if last_elem ~= '' then
+                    table.insert(temp[3], '')
+                end
             end
 
             if temp[2] == 'Match' then
@@ -154,9 +179,10 @@ local function merge_class(tbl)
         temp[1] = temp[1] .. (type(v[1]) == 'table' and '' or v[1])
     end
 
-    U.print_table(temp)
+    temp[1] = 'class [' .. temp[1] .. ']'
+    temp[3] = concat_temp_class(temp[3])
 
-    return res
+    return temp
 end
 
 ---@param tbl table
@@ -225,13 +251,16 @@ M.merge = function(tbl, merged)
                 if temp[2] == 'Match either' then
                     local removed_v = v[2] == 'or' and '' or v[2]:gsub('Match ', '')
 
-                    temp[3][#temp[3]] = last_elem == '' and removed_v or last_elem .. '<br>' .. removed_v
+                    temp[3][#temp[3]] = last_elem == '' and removed_v or (last_elem .. '<br>' .. removed_v)
                 end
 
                 if v[2] == 'or' then
+                    temp[3] = temp[2] == 'Match' and { table.concat(temp[3], '<br>') } or temp[3]
                     temp[2] = 'Match either'
-                    temp[3] = { table.concat(temp[3], '<br>') }
-                    table.insert(temp[3], '')
+
+                    if last_elem ~= '' then
+                        table.insert(temp[3], '')
+                    end
                 end
 
                 if temp[2] == 'Match' then
@@ -242,10 +271,21 @@ M.merge = function(tbl, merged)
             end
         else
             -- v is not normal (it's either group or class)
+            if #temp[1] > 0 then
+                table.insert(merged, temp)
+                temp = { '', '', {} }
+            end
+
             if v[1][2] == '#CLASS' then
-                merge_class(v)
+                table.insert(merged, merge_class(v))
+            end
+
+            if v[1] == '#GROUP' then
+                -- U.print_table(v)
+                merged = M.merge(v, merged)
             end
         end
+
         temp[1] = temp[1] .. (type(v[1]) == 'table' and '' or v[1])
     end
 
@@ -253,12 +293,13 @@ M.merge = function(tbl, merged)
 
     table.insert(merged, temp)
 
-    -- U.print_table(merged, 0)
+    U.print_table(merged, 0)
     return merged
 end
 
-local idx = 4
-local inp = '[a+-zfuck]' or T.test_inputs[idx]
+-- 134568910
+local idx = 10
+local inp = '(ah)[f-g]' or T.test_inputs[idx]
 local split_tbl = split_regex(inp)
 local expl_tbl = explain(split_tbl, {})
 

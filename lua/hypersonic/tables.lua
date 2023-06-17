@@ -10,7 +10,7 @@ T.test_inputs = {
     'x(y(\\d+)\\()',
     'ac|\\x\\(',
     'ab\\(\\xxyz',
-    'ahoj'
+    'ah(oj)'
 }
 
 T.char_table = {
