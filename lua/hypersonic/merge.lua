@@ -1,10 +1,18 @@
+--[[
+
+For future developers:
+
+I'm very sorry.
+Good luck.
+    - tomiis
+
+]]
+
 local explain = require('explain').explain
 local U = require('utils')
 local split_regex = require('split').split_regex
 local T = require('tables')
 local M = {}
-
--- TODO: groups, clear temp
 
 ---@alias regex_type 'Match'|'Match either'|''
 
@@ -179,21 +187,32 @@ local function merge_class(tbl)
         temp[1] = temp[1] .. (type(v[1]) == 'table' and '' or v[1])
     end
 
-    temp[1] = 'class [' .. temp[1] .. ']'
+    temp[1] = '[' .. temp[1] .. ']'
     temp[3] = concat_temp_class(temp[3])
 
     return temp
 end
 
 ---@param tbl table
----@param merged table
+---@param is_capturing boolean
 ---@return table
-M.merge = function(tbl, merged)
+local function check_capture(tbl, is_capturing)
+    if not is_capturing then
+        return tbl
+    end
+
+    tbl[2] = tbl[2]:gsub('Match', 'Capture')
+
+    return tbl
+end
+
+---@param tbl table
+---@param merged table
+---@param is_capturing boolean
+---@return table
+M.merge = function(tbl, merged, is_capturing)
     ---@class temp
     local temp = { '', '', {} }
-
-    -- add title
-    merged = { tbl[1] }
 
     for idx = 2, #tbl do
         local v = tbl[idx]
@@ -230,8 +249,14 @@ M.merge = function(tbl, merged)
                 end
 
                 if is_char_quantifier then
-                    local removed_t = T.special_table[v[1]]:gsub('Match', 'and')
-                    temp[2] = temp[2] .. ' ' .. removed_t
+                    local removed_t = T.special_table[v[1]]:gsub('Match', ' and')
+
+                    if temp[2] == '' and v[1] == '.' then
+                        removed_t = T.special_table[v[1]]
+                    end
+
+                    -- trim string
+                    temp[2] = (temp[2] .. ' ' .. removed_t):gsub("^%s*(.-)%s*$", "%1")
                 end
 
                 if is_char_chartbl then
@@ -271,7 +296,8 @@ M.merge = function(tbl, merged)
             end
         else
             -- v is not normal (it's either group or class)
-            if #temp[1] > 0 then
+            if #temp[1] > 0  then
+                temp = check_capture(temp, is_capturing)
                 table.insert(merged, temp)
                 temp = { '', '', {} }
             end
@@ -281,27 +307,28 @@ M.merge = function(tbl, merged)
             end
 
             if v[1] == '#GROUP' then
-                -- U.print_table(v)
-                merged = M.merge(v, merged)
+                merged = M.merge(v, merged, true)
             end
         end
 
-        temp[1] = temp[1] .. (type(v[1]) == 'table' and '' or v[1])
+        local title = (type(v[1]) == 'table' or v[1] == '#GROUP') and '' or v[1]
+        temp[1] = temp[1] .. title
     end
 
-    temp[3] = concat_temp(temp[3], temp[2])
 
-    table.insert(merged, temp)
+    if #temp[1] > 0 then
+        temp = check_capture(temp, is_capturing)
+        temp[3] = concat_temp(temp[3], temp[2])
+        table.insert(merged, temp)
+    end
 
-    U.print_table(merged, 0)
     return merged
 end
 
--- 134568910
-local idx = 10
-local inp = '(ah)[f-g]' or T.test_inputs[idx]
+local idx = 7
+local inp = T.test_inputs[idx]
 local split_tbl = split_regex(inp)
 local expl_tbl = explain(split_tbl, {})
 
-M.merge(expl_tbl, {})
+U.print_table(M.merge(expl_tbl, { expl_tbl[1] }, false))
 return M
