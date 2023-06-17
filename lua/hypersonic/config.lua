@@ -1,6 +1,6 @@
 local config = {
-    ---@type 'round'|'bold'|'double'|'none'
-    border = 'round',
+    ---@type 'none'|'single'|'double'|'rounded'|'solid'|'shadow'
+    border = 'rounded',
 }
 
 return config
