@@ -35,6 +35,7 @@ Note: Hypersonic is currently under development and is not ready for immediate u
 - Advanced regex is not working (e.g. `(?:)`)
 - Works only for correctly written regex.
 - Lua regex is not supported
+- Nested groups are not displaying correctly
 
 ## Installation
 

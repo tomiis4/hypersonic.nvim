@@ -325,8 +325,9 @@ M.merge = function(tbl, merged, is_capturing)
     return merged
 end
 
+-- FIXME
 local idx = 7
-local inp = T.test_inputs[idx]
+local inp = '[ah(x)[x]]' or T.test_inputs[idx]
 local split_tbl = split_regex(inp)
 local expl_tbl = explain(split_tbl, {})
 

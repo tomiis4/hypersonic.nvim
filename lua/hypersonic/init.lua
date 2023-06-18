@@ -1,4 +1,5 @@
 local config = require('hypersonic.config')
+local api = vim.api
 
 ---@return table
 local function get_content()
@@ -6,39 +7,45 @@ local function get_content()
 end
 
 ---@param content table
----@param opts table
+---@param opts options
 local function create_window(content, opts)
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-
-    local width = 40
-    local height = #content + 2
-
-    local win_top = math.max(1, row - math.floor(height / 2))
-    local win_left = math.max(0, col - math.floor(width / 2))
-
     local buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_lines(buf, 0, -1, true, content)
 
-    local win = vim.api.nvim_open_win(buf, true, {
-            relative = "cursor",
-            row = win_top,
-            col = win_left,
-            width = width,
-            height = height,
-            style = "minimal",
-            border = opts.border,
-            title = 'TITLE',
-            title_pos = 'center',
-            focusable = true
-        })
+    -- configure buffer & set lines
+    vim.bo[buf].modifiable = true
+    api.nvim_buf_set_lines(buf, 0, -1, true, content)
+    vim.bo[buf].modifiable = false
 
-    vim.api.nvim_set_current_win(win)
+    api.nvim_buf_set_name(buf, 'test-name')
+
+    -- create window
+    api.nvim_open_win(buf, true, {
+        relative = 'cursor',
+        row = 1,
+        col = 0,
+        width = 12,
+        height = 3,
+        style = "minimal",
+        border = opts.border,
+        title = 'TITLE',
+        title_pos = 'left',
+        focusable = true,
+    })
+
+    -- close window
+    api.nvim_buf_set_keymap(
+        buf,
+        'n',
+        opts.close_window,
+        ':lua vim.api.nvim_buf_delete(' .. buf .. ', {force=true, unload=false}) <CR>',
+        { silent = true }
+    )
 end
 
 local function setup(opts)
     opts = opts or config
 
-    local content = {'Testing str'}
+    local content = { 'Testing str' }
     create_window(content, opts)
 end
 
