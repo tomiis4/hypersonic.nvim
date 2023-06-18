@@ -2,8 +2,8 @@
 local config = {
     ---@type 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|table
     border = 'rounded',
-    ---@type string
-    close_window = 'q'
+    ---@type number 0-100
+    winblend = 0
 }
 
 return config
