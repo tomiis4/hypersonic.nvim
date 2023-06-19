@@ -1,4 +1,4 @@
-<h1 align="center"> Hypersonic - NeoVim Plugin for Regex Writing and Testing (Under Development) </h1>
+<h1 align="center"> Hypersonic - NeoVim Plugin for Regex Writing and Testing </h1>
 
 <p align="center">
     A powerful NeoVim plugin created to increase your regular expression (RegExp) writing and testing experience. 
