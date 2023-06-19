@@ -1,11 +1,11 @@
 local S = {}
-local U = require('utils')
+local U = require('hypersonic.utils')
 
 ---split regex to specific table
 ---@param str string
 ---@return table
 function S.split_regex(str)
-    local main = {{'Regex', str}}
+    local main = {{'', str}}
     local depth = 0
     local escape_char = false
 

@@ -1,11 +1,11 @@
 // testing with
 
-/^hello/
-/(\/)(.*?)(\/)/
-/\d*/
-/gr[ae]y/
-/^[a-zA-Z]+$/
-/^\S+$/
+^hello
+(\/)(.*?)(\/)
+\d*
+gr[ae]y
+^[a-zA-Z]+$
+^\S+$
 
 
 

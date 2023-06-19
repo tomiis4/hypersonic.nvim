@@ -1,2 +1,6 @@
--- vim.keymap.set('n', '<leader>r', "require('hypersonic').setup({border = 'rounded'})", {})
--- require('hypersonic').setup()
+vim.api.nvim_create_user_command('Hypersonic', require('hypersonic').explain, { range = true })
+-- vim.api.nvim_create_user_command(
+--     'Hypersonic',
+--     require('hypersonic').explain,
+--     { range = true }
+-- )

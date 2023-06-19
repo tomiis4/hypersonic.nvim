@@ -1,5 +1,5 @@
-local U = require('utils')
-local T = require('tables')
+local U = require('hypersonic.utils')
+local T = require('hypersonic.tables')
 local M = {}
 
 ---@param char string

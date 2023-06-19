@@ -1,34 +1,96 @@
+local merge = require('hypersonic.merge').merge
+local explain_regex = require('hypersonic.explain').explain
+local split_regex = require('hypersonic.split').split_regex
+local U = require('hypersonic.utils')
+
 local config = require('hypersonic.config')
 local api = vim.api
+local ns = api.nvim_create_namespace('hypersonic')
 
----@return table
-local function get_content()
-    return {}
+---@class options
+---@field border 'none'|'single'|'double'|'rounded'|'solid'|'shadow'
+---@field winblend number 0-100
+---@field add_padding boolean default true
+---@field hl_group string default 'Keyword'
+
+---@param opts options
+---@return string, table, table
+local function get_regex_data(opts)
+    local res = {}
+    local highlights = {}
+
+    -- get regex
+    local char_start = vim.fn.getpos("'<")[3]
+    local char_end = vim.fn.getpos("'>")[3]
+
+    local line = vim.fn.getline('.')
+    local input = line:sub(char_start, char_end)
+
+    -- edit content
+    local split_tbl = split_regex(input)
+    local expl_tbl = explain_regex(split_tbl, {})
+    local merged = merge(expl_tbl, { expl_tbl[1] }, false)
+
+    -- format text to buffer format
+    for m_idx = 2, #merged do
+        local v = merged[m_idx]
+        local longest_name = U.get_longest_name(merged)
+        local padding = opts.add_padding == false and '' or (' '):rep(longest_name - #v[1])
+        local name = '"' .. v[1] .. '": '
+
+        table.insert(res, name .. padding .. v[2])
+        table.insert(highlights, { #res-1, #name })
+
+        -- if it have another values stored in temp3
+        if #v[3] > 0 then
+            for t_idx, temp in pairs(v[3]) do
+                local separated_txt = U.split(temp, '<br>')
+
+                for sep_idx, sep in pairs(separated_txt) do
+                    local sep_number = sep_idx == 1 and (' '):rep(3) .. t_idx .. ') '
+                        or (' '):rep(3 + 3)
+
+                    table.insert(res, sep_number .. sep)
+                end
+            end
+        end
+    end
+
+    return merged[1][2], res, highlights
 end
 
+---@param title string
 ---@param content table
 ---@param opts options
-local function create_window(content, opts)
+---@param highlights table
+local function create_window(title, content, opts, highlights)
     local buf = vim.api.nvim_create_buf(false, true)
 
     api.nvim_buf_set_lines(buf, 0, -1, true, content)
+
+    -- add highlights
+    print(#highlights)
+    for _, hl in ipairs(highlights) do
+        local hl_group = opts.hl_group or config.hl_group
+        api.nvim_buf_add_highlight(buf, ns, hl_group, hl[1], 0, hl[2])
+    end
 
     -- create window
     local win = api.nvim_open_win(buf, false, {
             relative = 'cursor',
             row = 1,
             col = 0,
-            width = 45,
-            height = 3,
+            width = U.get_longest(content) + 1,
+            height = #content,
             style = "minimal",
-            border = opts.border,
-            title = 'TESTOVÁNÍ',
-            title_pos = 'center',
+            border = opts.border or config.border,
+            title = title,
+            title_pos = 'left',
             focusable = true,
         })
 
     -- configure
-    api.nvim_win_set_option(win, "winblend", opts.winblend)
+    api.nvim_win_set_option(win, "winblend", opts.winblend or config.winblend)
     api.nvim_buf_set_name(buf, 'Hypersonic')
     api.nvim_buf_set_option(buf, 'modifiable', false)
 
@@ -68,13 +130,19 @@ local function create_window(content, opts)
     })
 end
 
-local function setup(opts)
-    opts = opts or config
+local cfg = {}
 
-    local content = { 'Testování', 'testování floating okna' }
-    create_window(content, opts)
+local function setup(opts)
+    cfg = opts
+end
+
+local function explain()
+    local title, content, highlights = get_regex_data(cfg)
+
+    create_window(title, content, cfg, highlights)
 end
 
 return {
-    setup = setup
+    setup = setup,
+    explain = explain
 }

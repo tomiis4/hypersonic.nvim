@@ -7,11 +7,10 @@ Good luck.
     - tomiis
 
 ]]
-
-local explain = require('explain').explain
-local U = require('utils')
-local split_regex = require('split').split_regex
-local T = require('tables')
+-- local explain = require('explain').explain
+-- local split_regex = require('split').split_regex
+local T = require('hypersonic.tables')
+local U = require('hypersonic.utils')
 local M = {}
 
 ---@alias regex_type 'Match'|'Match either'|''
@@ -41,7 +40,7 @@ local function concat_temp(temp, type)
         for _, v in pairs(keywords) do
             if #v == 1 then
                 if is_escaped then
-                    temp_res = temp_res .. '<br>escaped ' .. temp_kw
+                    temp_res = temp_res .. '<br>escaped ' .. temp_kw:sub(1)
                     temp_kw = ''
                 end
 
@@ -50,18 +49,18 @@ local function concat_temp(temp, type)
                 temp_kw = temp_kw .. v
             elseif U.starts_with(v, 'escaped') then
                 if is_normal then
-                    temp_res = temp_res .. '<br>' .. temp_kw
+                    temp_res = temp_res .. '<br>' .. temp_kw:sub(1)
                     temp_kw = ''
                 end
 
                 is_normal = false
                 is_escaped = true
 
-                local replaced = v:gsub('escaped ', '')
+                local replaced = v:gsub('escaped \\', '')
                 temp_kw = temp_kw .. replaced
             else
                 if is_escaped then
-                    temp_kw = 'escaped ' .. temp_kw
+                    temp_kw = 'escaped ' .. temp_kw:sub(1)
                 end
 
                 is_normal = false
@@ -74,7 +73,7 @@ local function concat_temp(temp, type)
 
         if temp_kw ~= '' then
             if is_escaped then
-                temp_kw = 'escaped ' .. temp_kw
+                temp_kw = 'escaped ' .. temp_kw:sub(1)
             end
 
             temp_res = temp_res .. '<br>' .. temp_kw
@@ -99,7 +98,7 @@ local function concat_temp_class(tbl)
             temp = temp .. (temp:find(v) and '' or v)
         else
             if temp ~= '' then
-                table.insert(res, 'one chacacter from ' .. temp)
+                table.insert(res, 'one character from ' .. temp)
                 temp = ''
             end
             table.insert(res, v)
@@ -107,7 +106,7 @@ local function concat_temp_class(tbl)
     end
 
     if temp ~= '' then
-        table.insert(res, 'one chacacter from list ' .. temp)
+        table.insert(res, 'one character from list ' .. temp)
     end
 
     return res
@@ -130,7 +129,7 @@ local function merge_class(tbl)
                 local removed_temp = temp[2]:gsub('Match ', '')
 
                 if removed_temp ~= '' then
-                    table.insert(temp[3], removed_temp)
+                    table.insert(temp[3], removed_temp:gsub('\\', '', 1)[1])
                 end
 
                 temp[2] = 'Match'
@@ -229,7 +228,7 @@ M.merge = function(tbl, merged, is_capturing)
                     local removed_temp = temp[2]:gsub('Match ', '')
 
                     if removed_temp ~= '' then
-                        table.insert(temp[3], removed_temp)
+                        table.insert(temp[3], removed_temp:gsub('\\', '', 1)[1])
                     end
 
                     temp[2] = 'Match'
@@ -296,7 +295,7 @@ M.merge = function(tbl, merged, is_capturing)
             end
         else
             -- v is not normal (it's either group or class)
-            if #temp[1] > 0  then
+            if #temp[1] > 0 then
                 temp = check_capture(temp, is_capturing)
                 table.insert(merged, temp)
                 temp = { '', '', {} }
@@ -326,10 +325,10 @@ M.merge = function(tbl, merged, is_capturing)
 end
 
 -- FIXME
-local idx = 7
-local inp = '[ah(x)[x]]' or T.test_inputs[idx]
-local split_tbl = split_regex(inp)
-local expl_tbl = explain(split_tbl, {})
-
-U.print_table(M.merge(expl_tbl, { expl_tbl[1] }, false))
+-- local idx = 7
+-- local inp = '[ah(x)[x]]' or T.test_inputs[idx]
+-- local split_tbl = split_regex(inp)
+-- local expl_tbl = explain(split_tbl, {})
+--
+-- U.print_table(M.merge(expl_tbl, { expl_tbl[1] }, false))
 return M

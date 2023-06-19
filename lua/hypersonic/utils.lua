@@ -63,7 +63,7 @@ end
 ---@param ending string
 ---@return boolean
 function U.ends_with(s, ending)
-    return ending == "" or s:sub(-#ending) == ending
+    return ending == "" or s:sub( -#ending) == ending
 end
 
 ---@param tbl table
@@ -96,6 +96,27 @@ function U.split(s, sep)
     end
 
     return t, n
+end
+
+---@param tbl table
+---@return integer
+function U.get_longest(tbl)
+    table.sort(tbl, function(a, b) return #b < #a end)
+    return #tbl[1]
+end
+
+---@param tbl table
+---@return integer
+function U.get_longest_name(tbl)
+    local n = 0
+
+    for _, v in pairs(tbl) do
+        if #v[1] > n then
+            n = #v[1]
+        end
+    end
+
+    return n
 end
 
 return U
