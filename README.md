@@ -26,7 +26,6 @@ Note: Hypersonic is currently under development and is not ready for immediate u
 
 - **Pattern Explanation**: Understanding complex RegExp patterns can be challenging. Hypersonic comes with an integrated pattern explanation feature that provides detailed explanations for your RegExp patterns, helping you grasp their meaning and behavior.
 
-- **Snippet Integration**: Save time and effort with Hypersonic's snippet integration. Easily access and insert commonly used RegExp patterns with just a few keystrokes.
 
 ## Currently accessible
 - Simple RegExp explaining
@@ -65,7 +64,9 @@ return {
     'tomiis4/Hypersonic.nvim',
     cmd = "Hypersonic",
     config = function()
-        require('hypersonic')
+        require('hypersonic').setup({
+            -- config
+        })
     end
 }
 ```
@@ -83,10 +84,16 @@ require('hypersonic').setup()
 <summary> Default configuration </summary>
 
 ```lua
-require('hypersonic').setup {
-    ---@type 'round'|'bold'|'double'|'none'
-    border = 'round',
-}
+require('hypersonic').setup({
+    ---@type 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|table
+    border = 'rounded',
+    ---@type number 0-100
+    winblend = 0,
+    ---@type boolean
+    add_padding = true,
+    ---@type string
+    hl_group = 'Keyword'
+})
 ```
 
 </details>
@@ -98,12 +105,13 @@ require('hypersonic').setup {
 |   README.md
 |
 +---lua
-|   |
 |   \---hypersonic
-|           characters.txt
 |           config.lua
 |           explain.lua
+|           init.lua
+|           merge.lua
 |           split.lua
+|           tables.lua
 |           utils.lua
 |
 +---plugin
@@ -111,10 +119,9 @@ require('hypersonic').setup {
 |
 \---test
         testing_file.txt
-
 ```
 
-<details open>
+<details>
 <summary> How does it work </summary>
 
 ## How does it work?
@@ -166,7 +173,7 @@ local meta_table = {
     ['s'] = 'Any whitespace character',
     ['S'] = 'Any non-whitespace character',
     ['d'] = 'Any digit',
-    -- more in characters.txt
+    -- more in tables.lua
 }
 ```
 
@@ -193,14 +200,14 @@ local meta_table = {
 
 ```js
 {
-    "g",
-    "r",
+    'g',
+    'r',
     {
-        "#CLASS", // #CLASS or #GROUP
-        "a",
-        "e",
+        '#CLASS', // #CLASS or #GROUP
+        'a',
+        'e',
     },
-    "y",
+    'y',
 }
 ```
 
@@ -211,16 +218,16 @@ local meta_table = {
 
 ```lua
 {
-    { "Regex", "gr[ae]y" },
-    { "g",     "Match g" },
-    { "r",     "Match r" },
+    { '', 'gr[ae]y' },
+    { 'g',     'Match g' },
+    { 'r',     'Match r' },
     {
-        { "class #CLASS", "#CLASS" },
-        { "a",            "Match a", },
-        { "",             "or", },
-        { "e",            "Match e", },
+        { 'class #CLASS', '#CLASS' },
+        { 'a',            'Match a', },
+        { '',             'or', },
+        { 'e',            'Match e', },
     },
-    { "y", "Match y", }
+    { 'y', 'Match y', }
 }
 ```
 
@@ -258,16 +265,16 @@ local meta_table = {
 
 ```js
 {
-    { "Regex", "gr[ae]y" },
-    { "g",     "Match g" },
-    { "r",     "Match r" },
+    { '', 'gr[ae]y' },
+    { 'g',     "Match g' },
+    { 'r',     "Match r' },
     {
-        { "class #CLASS", "#CLASS" },
-        { "a",            "Match a", },
-        { "",             "or", },
-        { "e",            "Match e", },
+        { 'class #CLASS', '#CLASS' },
+        { 'a',            'Match a' },
+        { '',             'gr' },
+        { 'e',            'Match e' },
     },
-    { "y", "Match y", }
+    { 'y', 'Match y', }
 }
 ```
 
@@ -278,10 +285,10 @@ local meta_table = {
 
 ```lua
 {
-    {'Regex',  'gr[ae]y'},
+    {'',  'gr[ae]y'},
     {'gr',     'Match gr'},
     {'[ae]',   'Match either', 
-        {'a', 'y'},
+        {'one character from list ae'},
     },
     {'y',      'Match "y"'}
 }
@@ -293,68 +300,19 @@ local meta_table = {
 <summary> NeoVim output </summary>
 
 ```
-+-------------------------------------------+
-| Regex: gr[ae]y                            |
-|-------------------------------------------+
-| gr:   Match "gr"                          |
-| [ae]: Match either                        |
-|    1) "a"                                 |
-|    2) "y"                                 |
-| y:    Match with "y"                      |
-+-------------------------------------------+
++-gr[ae]y------------------------------+
+| "gr":   Match gr                     |
+| "[ae]": Match either                 |
+|    1) one chacarcter from list ae    |
+| "y":    Match y                      |
++--------------------------------------+
 ```
 
 </details>
 
 
----
-- Todo
-    - fix _if `temp2` is norma_, because of the escaped/groups/class/special
-    - class
-    - groups
----
-- loop trough `input` without `idx=1` (title) and add it to `merged`
-- each input is `v`, (1 = key, 2 = explanation)
-- make `temp` table, (1 = key, 2 = value, 3 = second data)
----
-- if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is nil
-    - if `v2` is escaped (starts with `Match escaped`)
-        - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
-            - put it to `temp3`, and push `v2` to `temp3`
-    - if `v2` is normal (starts with `Match "`)
-        - add `v1` to idx1, from `temp2` remove last (") and add `v1 + "`
-    - if `v2` is `or`
-        - from `temp2` replace `Match` with `Match either`,
-        - from `temp2` remove from end of the match to end, e.g. `Match "x"` -> `"x"`
-            - put it to `temp3`, and push `v2` to `temp3`
-        - to `temp3` add new empty string
-- if `temp2` is normal (starts with `Match` and ends with `"`) and `temp3` is not nil (table)
-    - if is `temp2` "Match either"
-        - if last element of `temp3` is empty string add `v2` to it
-        - if last element is not empty string,
-            - if is normal (starts with `Match "`)
-                - connect it with `v1`
-            - else connect to last string `\n` + `v2`
- 
----
----
-- TODO
-    - [ ] Figure out what to do with classes
----
-- recursively loop trough `input`, not including `idx=1`
-- make empty string `temp_expl`
-- if is normal letter/number (starts with "Match ")
-    - `temp_expl` is empty
-        - add `"Match " + "x"`
-    - is not empty
-        - remove last element (if is `"`), add letter, add `"`
-- if is `temp_expl` not empty and char. is some special e.g. `|`
-    - in `temp_expl` remove "Match" and add "Match either"
-- if is some special explanation (does not start with "Match ")
-    - if is `temp_expl` not empty, push it to new explanation
-    - make it empty and push special explanation
-- if is recursively, `depth++`
----
+- `v`: 1 = key, 2 = explanation
+- `temp`: 1 = key, 2 = value, 3 = second data
 
 </details>
 
