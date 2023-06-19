@@ -39,7 +39,7 @@ local function get_regex_data(opts)
         local name = '"' .. v[1] .. '": '
 
         table.insert(res, name .. padding .. v[2])
-        table.insert(highlights, { #res-1, #name })
+        table.insert(highlights, { #res - 1, #name })
 
         -- if it have another values stored in temp3
         if #v[3] > 0 then
@@ -69,7 +69,6 @@ local function create_window(title, content, opts, highlights)
     api.nvim_buf_set_lines(buf, 0, -1, true, content)
 
     -- add highlights
-    print(#highlights)
     for _, hl in ipairs(highlights) do
         local hl_group = opts.hl_group or config.hl_group
         api.nvim_buf_add_highlight(buf, ns, hl_group, hl[1], 0, hl[2])
@@ -137,8 +136,6 @@ local function setup(opts)
 end
 
 local function explain()
-    vim.print(split_regex('[a-z(]]'))
-
     local title, content, highlights = get_regex_data(cfg)
 
     create_window(title, content, cfg, highlights)
