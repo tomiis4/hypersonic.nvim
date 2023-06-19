@@ -137,6 +137,8 @@ local function setup(opts)
 end
 
 local function explain()
+    vim.print(split_regex('[a-z(]]'))
+
     local title, content, highlights = get_regex_data(cfg)
 
     create_window(title, content, cfg, highlights)

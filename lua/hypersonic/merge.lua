@@ -7,8 +7,6 @@ Good luck.
     - tomiis
 
 ]]
--- local explain = require('explain').explain
--- local split_regex = require('split').split_regex
 local T = require('hypersonic.tables')
 local U = require('hypersonic.utils')
 local M = {}
@@ -94,7 +92,7 @@ local function concat_temp_class(tbl)
     for _, v1 in pairs(tbl) do
         local v = U.ends_with(v1, '<br>') and v1:sub(0, -5) or v1
 
-        if #v == 1 then
+        if #v == 1 and v:match('[a-zA-Z0-9]') then
             temp = temp .. (temp:find(v) and '' or v)
         else
             if temp ~= '' then
@@ -254,7 +252,7 @@ M.merge = function(tbl, merged, is_capturing)
                         removed_t = T.special_table[v[1]]
                     end
 
-                    -- trim string
+                    -- trim string from spaces on sides
                     temp[2] = (temp[2] .. ' ' .. removed_t):gsub("^%s*(.-)%s*$", "%1")
                 end
 

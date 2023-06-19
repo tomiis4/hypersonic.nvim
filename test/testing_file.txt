@@ -6,7 +6,7 @@
 gr[ae]y
 ^[a-zA-Z]+$
 ^\S+$
-
+[a-z(]]
 
 
 // testing on
