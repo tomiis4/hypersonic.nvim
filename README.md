@@ -1,21 +1,15 @@
 <h1 align="center"> Hypersonic - NeoVim Plugin for Regex Writing and Testing (Under Development) </h1>
 
 <p align="center">
-<b>
-Note: Hypersonic is currently under development and is not ready for immediate use. Please stay tuned for future updates and releases.
-</b>
-</p>
-
-<p align="center">
     A powerful NeoVim plugin created to increase your regular expression (RegExp) writing and testing experience. 
     Whether you're a newbie or profesional developer, Hypersonic is here to make your life easier and boost your productivity
 </p>
 
 
-
 <hr>
 
-<h3 align="center"> image preview </h3>
+<h3 align="center"> <img src="https://media.discordapp.net/attachments/772927831441014847/1120439746909458442/image.png?width=886&height=458"> </h3>
+<h6 align="center"> Colorscheme: Rose-Pine; Font: JetBrainsMono NF </h6>
 
 <hr>
 
@@ -35,6 +29,11 @@ Note: Hypersonic is currently under development and is not ready for immediate u
 - Works only for correctly written regex.
 - Lua regex is not supported
 - Nested groups are not displaying correctly
+
+## Ussage
+- select regex
+- enter command: `Hypersonic`
+    - or set keybinding (e.g. `vim.keymap.set('v', '<leader>r', ':Hypersonic <CR>', { silent = true })`)
 
 ## Installation
 
