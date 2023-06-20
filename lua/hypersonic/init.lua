@@ -14,7 +14,7 @@ local ns = api.nvim_create_namespace('hypersonic')
 ---@field hl_group string default 'Keyword'
 
 ---@param opts options
----@return string, table, table
+---@return string|nil, table, table
 local function get_regex_data(opts)
     local res = {}
     local highlights = {}
@@ -25,6 +25,10 @@ local function get_regex_data(opts)
 
     local line = vim.fn.getline('.')
     local input = line:sub(char_start, char_end)
+
+    if input == '' then
+        return nil, {}, {}
+    end
 
     -- edit content
     local split_tbl = split_regex(input)
@@ -137,6 +141,11 @@ end
 
 local function explain()
     local title, content, highlights = get_regex_data(cfg)
+
+    if title == nil then
+        print('Please select correct RegExp')
+        return
+    end
 
     create_window(title, content, cfg, highlights)
 end
