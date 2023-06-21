@@ -7,7 +7,9 @@ local config = {
     ---@type boolean
     add_padding = true,
     ---@type string
-    hl_group = 'Keyword'
+    hl_group = 'Keyword',
+    ---@type string
+    wrapping = '"'
 }
 
 return config

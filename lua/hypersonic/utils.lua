@@ -46,12 +46,6 @@ function U.is_escape_char(char)
     return string.sub(char, 1, 1) == '\\'
 end
 
----@param depth integer
----@return string
-function U.get_depth(depth)
-    return string.rep('<space>', depth)
-end
-
 ---@param s string
 ---@param start string
 ---@return boolean
