@@ -12,10 +12,11 @@ local ns = api.nvim_create_namespace('hypersonic')
 ---@field winblend number 0-100
 ---@field add_padding boolean default true
 ---@field hl_group string default 'Keyword'
+---@field wrapping string default "
 
 ---@param opts options
 ---@return string|nil, table, table
-local function get_regex_data(opts)
+local function get_regex_data(opts, data)
     local res = {}
     local highlights = {}
 
@@ -24,7 +25,7 @@ local function get_regex_data(opts)
     local char_end = vim.fn.getpos("'>")[3]
 
     local line = vim.fn.getline('.')
-    local input = line:sub(char_start, char_end)
+    local input = data ~= '' and data or line:sub(char_start, char_end)
 
     if input == '' then
         return nil, {}, {}
@@ -40,7 +41,8 @@ local function get_regex_data(opts)
         local v = merged[m_idx]
         local longest_name = U.get_longest_name(merged)
         local padding = opts.add_padding == false and '' or (' '):rep(longest_name - #v[1])
-        local name = '"' .. v[1] .. '": '
+        local wrapping = opts.wrapping or config.wrapping
+        local name = wrapping .. v[1] .. wrapping .. ': '
 
         table.insert(res, name .. padding .. v[2])
         table.insert(highlights, { #res - 1, #name })
@@ -67,9 +69,7 @@ end
 ---@param content table
 ---@param opts options
 ---@param highlights table
-local function create_window(title, content, opts, highlights)
-    local buf = vim.api.nvim_create_buf(false, true)
-
+local function create_window(buf, title, content, opts, highlights)
     api.nvim_buf_set_lines(buf, 0, -1, true, content)
 
     -- add highlights
@@ -120,12 +120,15 @@ local function create_window(title, content, opts, highlights)
     })
 
     -- clear autogroup
-    api.nvim_create_autocmd('WinClosed', {
+    api.nvim_create_autocmd({ 'WinClosed' }, {
         pattern = tostring(win),
         group = group_id,
         callback = function()
             api.nvim_create_augroup(group, {})
 
+            if api.nvim_win_is_valid(win) then
+                api.nvim_win_close(win, true)
+            end
             if api.nvim_buf_is_valid(buf) then
                 api.nvim_buf_delete(buf, { force = true, unload = true })
             end
@@ -139,15 +142,16 @@ local function setup(opts)
     cfg = opts
 end
 
-local function explain()
-    local title, content, highlights = get_regex_data(cfg)
+local function explain(data)
+    local title, content, highlights = get_regex_data(cfg, data.args)
 
     if title == nil then
         print('Please select correct RegExp')
         return
     end
 
-    create_window(title, content, cfg, highlights)
+    local buf = vim.api.nvim_create_buf(false, true)
+    create_window(buf, title, content, cfg, highlights)
 end
 
 return {

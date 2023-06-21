@@ -25,6 +25,7 @@
 - Simple RegExp explaining
 
 ## Known issues
+- Does not work in v`0.8.3` (only tested one)
 - Advanced regex is not working (e.g. `(?:)`)
 - Works only for correctly written regex.
 - Lua regex is not supported
@@ -91,7 +92,9 @@ require('hypersonic').setup({
     ---@type boolean
     add_padding = true,
     ---@type string
-    hl_group = 'Keyword'
+    hl_group = 'Keyword',
+    ---@type string
+    wrapping = '"'
 })
 ```
 
@@ -259,7 +262,7 @@ local meta_table = {
 
 ### Merge
 
-<details open>
+<details>
 <summary> input </summary>
 
 ```js
@@ -279,7 +282,7 @@ local meta_table = {
 
 </details>
 
-<details open>
+<details>
 <summary> output </summary>
 
 ```lua
