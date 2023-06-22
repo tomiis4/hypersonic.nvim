@@ -253,7 +253,7 @@ M.merge = function(tbl, merged, is_capturing)
                     end
 
                     -- trim string from spaces on sides
-                    temp[2] = (temp[2] .. ' ' .. removed_t):gsub("^%s*(.-)%s*$", "%1")
+                    temp[2] = U.trim(temp[2] .. ' ' .. removed_t)
                 end
 
                 if is_char_chartbl then

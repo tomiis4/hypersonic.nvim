@@ -101,7 +101,7 @@ end
 
 ---@param tbl table
 ---@return integer
-function U.get_longest_name(tbl)
+function U.get_longest_key(tbl)
     local n = 0
 
     for _, v in pairs(tbl) do
@@ -111,6 +111,19 @@ function U.get_longest_name(tbl)
     end
 
     return n
+end
+
+---@param s string
+---@param wrap string
+---@return string
+function U.wrap(s, wrap)
+    return wrap .. s .. wrap
+end
+
+---@param s string
+---@return string
+function U.trim(s)
+    return s:gsub("^%s*(.-)%s*$", "%1")[1]
 end
 
 return U
