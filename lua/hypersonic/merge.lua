@@ -54,7 +54,7 @@ local function concat_temp(temp, type)
                 is_normal = false
                 is_escaped = true
 
-                local replaced = v:gsub('escaped \\', '')
+                local replaced = v:sub(#('escaped ' .. U.escaped_char))
                 temp_kw = temp_kw .. replaced
             else
                 if is_escaped then
@@ -119,7 +119,7 @@ local function merge_class(tbl)
     for idx = 2, #tbl do
         local v = tbl[idx]
 
-        local is_char_escaped = U.starts_with(v[1], '\\')
+        local is_char_escaped = U.is_escape_char(v[1])
         local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1])
 
         if #temp[3] == 0 then
@@ -127,7 +127,7 @@ local function merge_class(tbl)
                 local removed_temp = temp[2]:gsub('Match ', '')
 
                 if removed_temp ~= '' then
-                    table.insert(temp[3], removed_temp:gsub('\\', '', 1)[1])
+                    table.insert(temp[3], removed_temp:gsub(U.escaped_char, '', 1)[1])
                 end
 
                 temp[2] = 'Match'
@@ -216,7 +216,7 @@ M.merge = function(tbl, merged, is_capturing)
         local is_v_normal = type(v[2]) ~= 'table'
 
         if is_v_normal then
-            local is_char_escaped = U.starts_with(v[1], '\\')
+            local is_char_escaped = U.is_escape_char(v[1])
             local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1])
             local is_char_quantifier = U.has_value(T.quantifiers, v[1])
             local is_char_chartbl = T.char_table[v[1]] ~= nil
@@ -226,7 +226,7 @@ M.merge = function(tbl, merged, is_capturing)
                     local removed_temp = temp[2]:gsub('Match ', '')
 
                     if removed_temp ~= '' then
-                        table.insert(temp[3], removed_temp:gsub('\\', '', 1)[1])
+                        table.insert(temp[3], removed_temp:sub(#U.escaped_char))
                     end
 
                     temp[2] = 'Match'

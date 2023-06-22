@@ -28,10 +28,9 @@
 - Does not work in v`0.8.3` (only tested one)
 - Advanced regex is not working (e.g. `(?:)`)
 - Works only for correctly written regex.
-- Lua regex is not supported
 - Nested groups are not displaying correctly
 
-## Ussage
+## Usage
 - select regex
 - enter command: `Hypersonic`
     - or set keybinding (e.g. `vim.keymap.set('v', '<leader>r', ':Hypersonic <CR>', { silent = true })`)

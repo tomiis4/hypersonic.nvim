@@ -43,7 +43,7 @@ end
 ---@param char string
 ---@return boolean
 function U.is_escape_char(char)
-    return string.sub(char, 1, 1) == '\\'
+    return string.sub(char, 1, 1) == U.escaped_char
 end
 
 ---@param s string
@@ -125,5 +125,7 @@ end
 function U.trim(s)
     return s:gsub("^%s*(.-)%s*$", "%1")[1]
 end
+
+U.escaped_char = '\\'
 
 return U

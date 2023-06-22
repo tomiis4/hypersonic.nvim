@@ -45,13 +45,13 @@ function S.split_regex(str)
             depth = depth - 1
 
             -- get escape
-        elseif char == '\\' then
+        elseif char == U.escaped_char then
             escape_char = true
 
             -- add escape
         elseif escape_char then
             escape_char = false
-            U.insert(main, depth, '\\' .. char)
+            U.insert(main, depth, U.escaped_char .. char)
 
             -- get normal chars
         else

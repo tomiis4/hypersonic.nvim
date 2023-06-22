@@ -2,6 +2,15 @@ local U = require('hypersonic.utils')
 local T = require('hypersonic.tables')
 local M = {}
 
+local function fix_language()
+    local lang = vim.bo.filetype
+
+    if lang == 'lua' then
+        U.escaped_char = '%'
+        U.meta_table = T.lua_meta_table
+    end
+end
+
 ---@param char string
 ---@return string
 local function explain_char(char)
@@ -16,7 +25,6 @@ local function explain_char(char)
         return tables_explain
     end
 end
-
 
 --- class have only normal/escaped characters, ranges, except
 ---@param tbl table
@@ -70,6 +78,7 @@ end
 function M.explain(tbl, result_tbl)
     -- add title
     if result_tbl[1] == nil then
+        fix_language()
         result_tbl = { tbl[1] }
     end
 
