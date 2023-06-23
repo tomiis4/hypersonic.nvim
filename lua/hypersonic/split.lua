@@ -1,10 +1,23 @@
 local S = {}
 local U = require('hypersonic.utils')
 
+local function fix_language(s)
+    local lang = vim.bo.filetype
+
+    if lang == 'python' then
+        if U.starts_with(s, 'r"') or U.starts_with(s, 'r\'') then
+            s = s:sub(2)
+        end
+    end
+
+    return s
+end
+
 ---split regex to specific table
 ---@param str string
 ---@return table
 function S.split_regex(str)
+    str = fix_language(str)
     local main = { { '', str } }
     local depth = 0
     local escape_char = false
