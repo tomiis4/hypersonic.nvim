@@ -1,7 +1,7 @@
 <h1 align="center"> Hypersonic - NeoVim Plugin for Regex Writing and Testing </h1>
 
 <p align="center">
-    A powerful NeoVim plugin created to increase your regular expression (RegExp) writing and testing experience. 
+    A powerful NeoVim plugin created to increase your regular expression (RegExp) writing and testing experience.
     Whether you're a newbie or profesional developer, Hypersonic is here to make your life easier and boost your productivity
 </p>
 
@@ -22,9 +22,9 @@
 
 
 ## Currently accessible
-- Simple RegExp explaining
+- Simple **RegExp** *explaining*
+- **CommandLine** *live* *explanation*
 - Language support for LUA
-- CommandLine live explanation
 
 ## Known issues
 - Does not work in v`0.8.3` (only tested one)
@@ -76,15 +76,16 @@ use 'tomiis4/Hypersonic.nvim'
 <summary> Using lazy </summary>
 
 ```lua
-return {
+ {
     'tomiis4/Hypersonic.nvim',
+    event = "CmdlineEnter",
     cmd = "Hypersonic",
     config = function()
         require('hypersonic').setup({
             -- config
         })
     end
-}
+},
 ```
 
 </details>
@@ -307,7 +308,7 @@ local meta_table = {
 {
     {'',  'gr[ae]y'},
     {'gr',     'Match gr'},
-    {'[ae]',   'Match either', 
+    {'[ae]',   'Match either',
         {'one character from list ae'},
     },
     {'y',      'Match "y"'}
