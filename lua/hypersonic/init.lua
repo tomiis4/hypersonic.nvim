@@ -4,6 +4,7 @@
 ---@field add_padding boolean default true
 ---@field hl_group string default 'Keyword'
 ---@field wrapping string default "
+---@field enable_cmdline boolean default true
 
 ---@class HighlightData
 ---@field[1] string line
@@ -169,18 +170,37 @@ function M.setup(opts)
     for k, v in pairs(opts) do
         cfg[k] = v
     end
+
+    if cfg.enable_cmdline then
+        api.nvim_create_autocmd('CmdlineChanged', {
+            callback = function()
+                local cmdline = vim.fn.getcmdline()
+
+                if not U.starts_with(cmdline, ':') and cmdline ~= '' then
+                    -- stimulating params
+                    M.explain({ fargs = { cmdline } })
+                end
+            end
+        })
+
+        api.nvim_create_autocmd('CmdlineLeave', {
+            callback = function()
+                delete_window()
+            end
+        })
+    end
 end
 
 ---@param param table
 function M.explain(param)
-    local regex_title = get_selected() or param.args
+    local regex_title = param.fargs[1] or get_selected()
     if regex_title == nil then
         vim.print('Please select correct RegExp')
         return
     end
 
     local content, highlights = get_informations(regex_title)
-    local position = 'cursor'
+    local position = param.fargs[1] and 'editor' or 'cursor'
 
     display_window(regex_title, content, highlights, position)
 end

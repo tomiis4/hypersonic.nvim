@@ -1,4 +1,4 @@
----@class options
+---@class Options
 local config = {
     ---@type 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|table
     border = 'rounded',
@@ -9,7 +9,9 @@ local config = {
     ---@type string
     hl_group = 'Keyword',
     ---@type string
-    wrapping = '"'
+    wrapping = '"',
+    ---@type boolean
+    enable_cmdline = true
 }
 
 return config
