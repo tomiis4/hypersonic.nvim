@@ -175,8 +175,9 @@ function M.setup(opts)
         api.nvim_create_autocmd('CmdlineChanged', {
             callback = function()
                 local cmdline = vim.fn.getcmdline()
+                local cmdtype = vim.fn.getcmdtype()
 
-                if not U.starts_with(cmdline, ':') and cmdline ~= '' then
+                if cmdtype == '/' or cmdtype == '?' then
                     -- stimulating params
                     M.explain({ fargs = { cmdline } })
                 end

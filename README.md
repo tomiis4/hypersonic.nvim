@@ -8,7 +8,7 @@
 
 <hr>
 
-<h3 align="center"> <img src="https://media.discordapp.net/attachments/772927831441014847/1120439746909458442/image.png?width=886&height=458"> </h3>
+<h3 align="center"> <img src='https://media.discordapp.net/attachments/772927831441014847/1121863260128415825/image.png?width=815&height=458'> </h3>
 <h6 align="center"> Colorscheme: Rose-Pine; Font: JetBrainsMono NF </h6>
 
 <hr>
@@ -23,6 +23,8 @@
 
 ## Currently accessible
 - Simple RegExp explaining
+- Language support for LUA
+- CommandLine live explanation
 
 ## Known issues
 - Does not work in v`0.8.3` (only tested one)
@@ -31,9 +33,24 @@
 - Nested groups are not displaying correctly
 
 ## Usage
-- select regex
-- enter command: `Hypersonic`
-    - or set keybinding (e.g. `vim.keymap.set('v', '<leader>r', ':Hypersonic <CR>', { silent = true })`)
+1. selecting
+    - select RegExp then enter command `:Hypersonic`
+    - <details>
+        <summary> preview </summary>
+        <img src='https://media.discordapp.net/attachments/772927831441014847/1121863260128415825/image.png?width=815&height=458'>
+    </details>
+2. command
+    - enter command: `:Hypersonic your-regex`
+    - <details>
+        <summary> preview </summary>
+        <img src='https://media.discordapp.net/attachments/772927831441014847/1121863260451393576/image.png?width=815&height=458'>
+    </details>
+3. command-line search
+    - in cmd search `/your-regex` or `?your-regex`
+    - <details>
+        <summary> preview </summary>
+        <img src='https://media.discordapp.net/attachments/772927831441014847/1121863260736585729/image.png?width=815&height=458'>
+    </details>
 
 ## Installation
 
@@ -93,7 +110,9 @@ require('hypersonic').setup({
     ---@type string
     hl_group = 'Keyword',
     ---@type string
-    wrapping = '"'
+    wrapping = '"',
+    ---@type boolean
+    enable_cmdline = true
 })
 ```
 
