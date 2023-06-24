@@ -78,7 +78,7 @@ function S.split_regex(str)
 
             -- end groups
         elseif (char == ']' or char == ')') and not escape_char then
-            if char == '[' then
+            if char == ']' then
                 is_class = false
             end
 

@@ -28,13 +28,13 @@ T.quantifiers = {
 T.special_table = {
     ['|'] = 'or',
     ['-'] = 'to',
-    ['?'] = '0 or 1 time',
+    ['?'] = '(optional)',
     ['*'] = '0 or more times',
     ['+'] = '1 or more times',
     ['.'] = 'Match every character',
 }
 
-T.meta_table = {
+T.php_meta_table = {
     ['n'] = 'Match newline',
     ['r'] = 'Match carriage return',
     ['t'] = 'Match tab',
@@ -84,5 +84,7 @@ T.lua_meta_table = {
     ['B'] = 'Match all non-balanced character pairs',
     ['f'] = 'Match frontier'
 }
+
+T.meta_table = T.php_meta_table
 
 return T

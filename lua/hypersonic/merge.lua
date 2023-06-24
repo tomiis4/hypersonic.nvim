@@ -256,21 +256,31 @@ function M.merge(tbl, merged, is_capturing)
 
                 if is_char_quantifier then
                     local removed_t = T.special_table[v[1]]:gsub('Match', ' and')
-                    local last_merged = merged[#merged] or {}
 
+                    local last_merged = merged[#merged] or {}
+                    local is_last_group = U.starts_with(last_merged[2] or '', 'Capture')
+                    local is_last_class = (last_merged[1] or ''):sub(1, 1) == '['
+
+                    -- if is only "All characters"
                     if temp[2] == '' and v[1] == '.' then
                         removed_t = T.special_table[v[1]]
-                    elseif (last_merged[1] or ''):sub(1, 1) == '[' then
+                        temp[2] = U.trim(temp[2] .. ' ' .. removed_t)
+
                         -- if is previous class
+                    elseif is_last_group or is_last_class then
                         merged[#merged][1] = last_merged[1] .. v[1]
                         table.insert(merged[#merged][3], removed_t)
 
                         is_added = true
                         temp = { '', '', {} }
                     else
-                        -- trim string from spaces on sides because if is quantifier first
-                        print('X' .. v[1])
                         temp[2] = U.trim(temp[2] .. ' ' .. removed_t)
+                    end
+
+                    if not is_added then
+                        table.insert(merged, temp)
+                        temp = { '', '', {} }
+                        is_added = true
                     end
                 end
 

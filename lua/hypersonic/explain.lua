@@ -3,11 +3,15 @@ local T = require('hypersonic.tables')
 local M = {}
 
 local function fix_language()
-    local lang = vim.bo.filetype
+    -- if you are in cmdline don't cound filetype
+    local lang = vim.fn.getcmdpos() == 0 and '' or vim.bo.filetype
 
     if lang == 'lua' then
         U.escaped_char = '%'
         U.meta_table = T.lua_meta_table
+    else
+        U.escaped_char = '\\'
+        U.meta_table = T.php_meta_table
     end
 end
 
