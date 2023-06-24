@@ -22,14 +22,14 @@
 
 
 ## Currently accessible
-- Simple **RegExp** *explaining*
+- Simple **RegExp** *explanation*
+- Simple **error** handling techniques
 - **CommandLine** *live* *explanation*
-- Language support for LUA
+- Language support for **LUA**
 
 ## Known issues
 - Does not work in v`0.8.3` (only tested one)
 - Advanced regex is not working (e.g. `(?:)`)
-- Works only for correctly written regex.
 - Nested groups are not displaying correctly
 
 ## Usage

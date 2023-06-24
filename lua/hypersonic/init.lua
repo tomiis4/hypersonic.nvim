@@ -51,9 +51,9 @@ local function get_informations(regex)
     ---@type Highlights
     local highlight = {}
 
-    local split_tbl = Split(regex)
+    local split_tbl, err = Split(regex)
     local expl_tbl = Explain(split_tbl, {})
-    local merged = Merge(expl_tbl, {}, false)
+    local merged = err and { { err, '', {} } } or Merge(expl_tbl, {}, false)
 
     -- format 3-dimension table to 1-dimension
     for _, merged_v in pairs(merged) do

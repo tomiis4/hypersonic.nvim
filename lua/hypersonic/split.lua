@@ -13,11 +13,43 @@ local function fix_language(s)
     return s
 end
 
+---@param str string
+---@return table<boolean, string?>
+local function is_error(str)
+    -- replace all escaped () or []
+    for _, v in pairs({ '%[', '%]', '%(', '%)' }) do
+        str = str:gsub(U.escaped_char .. v, '')
+    end
+
+    -- if ther isn't any content inside [], ()
+    if U.find(str, '%[%]') >= 1 or U.find(str, '%(%)') >= 1 then
+        return { true, 'Error: Empty Parentheses/Brackets' }
+    end
+
+    -- delete all characters except (,),[,]
+    str = str:gsub('[^%(%)%[%]]', '')
+
+    if U.find(str, '%(') ~= U.find(str, '%)') then
+        return { true, 'Missing closing or opening square bracket' }
+    end
+
+    if U.find(str, '%[') ~= U.find(str, '%]') then
+        return { true, 'Missing closing or opening parenthesis' }
+    end
+
+    return { false }
+end
+
 ---split regex to specific table
 ---@param str string
----@return table
+---@return table, string
 function S.split_regex(str)
     str = fix_language(str)
+    local error = is_error(str)
+    if error[1] then
+        str = ''
+    end
+
     local main = { { '', str } }
     local depth = 0
     local escape_char = false
@@ -73,7 +105,7 @@ function S.split_regex(str)
         end
     end
 
-    return main
+    return main, error[2]
 end
 
 return S

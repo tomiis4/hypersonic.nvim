@@ -126,6 +126,18 @@ function U.trim(s)
     return s:gsub("^%s*(.-)%s*$", "%1")[1]
 end
 
+---@param s string
+---@param value string
+---@return number
+function U.find(s, value)
+    local n = 0
+    for _ in string.gmatch(s, value) do
+        n = n + 1
+    end
+
+    return n
+end
+
 U.escaped_char = '\\'
 
 return U
