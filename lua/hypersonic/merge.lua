@@ -104,7 +104,13 @@ local function concat_temp_class(tbl)
     end
 
     if temp ~= '' then
-        table.insert(res, 'one character from list ' .. temp)
+        table.insert(res, 'one character from ' .. temp)
+    end
+
+    for idx, v in pairs(res) do
+        if v == 'to' and U.ends_with(res[idx - 1], ' to ') then
+            res[idx - 1] = res[idx - 1]:gsub('to', '')
+        end
     end
 
     return res
@@ -162,6 +168,7 @@ local function merge_class(tbl)
             end
 
             if v[2] == 'to' then
+                temp[3][#temp[3]] = last_elem:gsub('to', '')
                 temp[3][#temp[3]] = last_elem .. ' to '
             end
 
@@ -206,14 +213,16 @@ end
 ---@param tbl table
 ---@param merged table
 ---@param is_capturing boolean
----@return table
-M.merge = function(tbl, merged, is_capturing)
+---@return table, string?
+function M.merge(tbl, merged, is_capturing)
     ---@class temp
     local temp = { '', '', {} }
+    local err = nil
 
     for idx = 2, #tbl do
         local v = tbl[idx]
         local is_v_normal = type(v[2]) ~= 'table'
+        local is_added = false
 
         if is_v_normal then
             local is_char_escaped = U.is_escape_char(v[1])
@@ -247,13 +256,22 @@ M.merge = function(tbl, merged, is_capturing)
 
                 if is_char_quantifier then
                     local removed_t = T.special_table[v[1]]:gsub('Match', ' and')
+                    local last_merged = merged[#merged] or {}
 
                     if temp[2] == '' and v[1] == '.' then
                         removed_t = T.special_table[v[1]]
-                    end
+                    elseif (last_merged[1] or ''):sub(1, 1) == '[' then
+                        -- if is previous class
+                        merged[#merged][1] = last_merged[1] .. v[1]
+                        table.insert(merged[#merged][3], removed_t)
 
-                    -- trim string from spaces on sides
-                    temp[2] = U.trim(temp[2] .. ' ' .. removed_t)
+                        is_added = true
+                        temp = { '', '', {} }
+                    else
+                        -- trim string from spaces on sides because if is quantifier first
+                        print('X' .. v[1])
+                        temp[2] = U.trim(temp[2] .. ' ' .. removed_t)
+                    end
                 end
 
                 if is_char_chartbl then
@@ -309,7 +327,7 @@ M.merge = function(tbl, merged, is_capturing)
         end
 
         local title = (type(v[1]) == 'table' or v[1] == '#GROUP') and '' or v[1]
-        temp[1] = temp[1] .. title
+        temp[1] = temp[1] .. (is_added and '' or title)
     end
 
 
@@ -319,7 +337,7 @@ M.merge = function(tbl, merged, is_capturing)
         table.insert(merged, temp)
     end
 
-    return merged
+    return merged, err
 end
 
 return M

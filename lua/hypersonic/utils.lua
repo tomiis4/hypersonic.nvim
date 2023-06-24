@@ -123,7 +123,8 @@ end
 ---@param s string
 ---@return string
 function U.trim(s)
-    return s:gsub("^%s*(.-)%s*$", "%1")[1]
+    local t, _ =  s:gsub("^%s*(.-)%s*$", "%1")
+    return t
 end
 
 ---@param s string

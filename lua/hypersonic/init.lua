@@ -53,11 +53,12 @@ local function get_informations(regex)
 
     local split_tbl, err = Split(regex)
     local expl_tbl = Explain(split_tbl, {})
-    local merged = err and { { err, '', {} } } or Merge(expl_tbl, {}, false)
+    local merged, m_err = Merge(expl_tbl, {}, false)
+    local modified = err and { { err, '', {} } } or m_err and { { m_err, '', {} } } or merged
 
     -- format 3-dimension table to 1-dimension
-    for _, merged_v in pairs(merged) do
-        local calc_padd = U.get_longest_key(merged) - #merged_v[1]
+    for _, merged_v in pairs(modified) do
+        local calc_padd = U.get_longest_key(modified) - #merged_v[1]
         local padding = cfg.add_padding and (' '):rep(calc_padd) or ''
         local wrapping = cfg.wrapping
 
