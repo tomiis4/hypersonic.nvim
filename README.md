@@ -25,7 +25,7 @@
 - Simple **RegExp** *explanation*
 - Simple **error** handling techniques
 - **CommandLine** *live* *explanation*
-- Language support for **LUA**
+- Language support for **LUA**, **PHP**
 
 ## Known issues
 - Does not work in v`0.8.3` (only tested one)
@@ -148,10 +148,10 @@ require('hypersonic').setup({
 ## How does it work?
 
 ### Process
--  Take regex from current line.
--  Spit to specified format.
--  Explain that regex.
--  Return result in floating window.
+- Take regex from current line.
+- Spit to specified format.
+- Explain that regex.
+- Return result in floating window.
 
 
 ### Split

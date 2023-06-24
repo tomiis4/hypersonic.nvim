@@ -53,7 +53,7 @@ local function get_informations(regex)
 
     local split_tbl, err = Split(regex)
     local expl_tbl = Explain(split_tbl, {})
-    local merged, m_err = Merge(expl_tbl, {}, false)
+    local merged, m_err = Merge(expl_tbl, {}, false, false)
     local modified = err and { { err, '', {} } } or m_err and { { m_err, '', {} } } or merged
 
     -- format 3-dimension table to 1-dimension

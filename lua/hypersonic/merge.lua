@@ -11,7 +11,7 @@ local T = require('hypersonic.tables')
 local U = require('hypersonic.utils')
 local M = {}
 
----@alias regex_type 'Match'|'Match either'|''
+---@alias regex_type 'Match'|'Match either'|'Match neither'|''
 
 ---@class temp
 ---@field[1] string regex name
@@ -126,7 +126,7 @@ local function merge_class(tbl)
         local v = tbl[idx]
 
         local is_char_escaped = U.is_escape_char(v[1])
-        local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1])
+        local is_char_normal = U.starts_with(v[2], 'Match ' .. v[1]) and v[1] ~= '^'
 
         if #temp[3] == 0 then
             if is_char_escaped then
@@ -150,17 +150,25 @@ local function merge_class(tbl)
             if v[2] == 'or' then
                 local removed_temp = temp[2]:gsub('Match ', '')
 
-                table.insert(temp[3], removed_temp)
-                table.insert(temp[3], '')
+                if temp[2] ~= 'Match neither' and idx ~= 2 then
+                    table.insert(temp[3], removed_temp)
+                    table.insert(temp[3], '')
+                else
+                    table.insert(temp[3], '')
+                end
 
-                temp[2] = 'Match either'
+                temp[2] = temp[2] == 'Match neither' and temp[2] or 'Match either'
+            end
+
+            if v[1] == '^' and idx == 2 then
+                temp[2] = 'Match neither'
             end
         end
 
         if #temp[3] > 0 or temp[2] == 'Match' then
             local last_elem = temp[3][#temp[3]]
 
-            if temp[2] == 'Match either' then
+            if temp[2] == 'Match either' or temp[2] == 'Match neither' then
                 local removed_v = v[2] == 'or' and '' or v[2]:gsub('Match ', '')
                 local add_br = U.ends_with(last_elem, ' to ') and '' or '<br>'
 
@@ -174,7 +182,7 @@ local function merge_class(tbl)
 
             if v[2] == 'or' then
                 temp[3] = temp[2] == 'Match' and { table.concat(temp[3], '<br>') } or temp[3]
-                temp[2] = 'Match either'
+                temp[2] = temp[2] == 'Match neither' and temp[2] or 'Match either'
 
                 if last_elem ~= '' then
                     table.insert(temp[3], '')
@@ -213,8 +221,9 @@ end
 ---@param tbl table
 ---@param merged table
 ---@param is_capturing boolean
+---@param is_group boolean
 ---@return table, string?
-function M.merge(tbl, merged, is_capturing)
+function M.merge(tbl, merged, is_capturing, is_group)
     ---@class temp
     local temp = { '', '', {} }
     local err = nil
@@ -261,26 +270,19 @@ function M.merge(tbl, merged, is_capturing)
                     local is_last_group = U.starts_with(last_merged[2] or '', 'Capture')
                     local is_last_class = (last_merged[1] or ''):sub(1, 1) == '['
 
-                    -- if is only "All characters"
-                    if temp[2] == '' and v[1] == '.' then
-                        removed_t = T.special_table[v[1]]
-                        temp[2] = U.trim(temp[2] .. ' ' .. removed_t)
+                    if v[1] == '.' and temp[2] == '' then
+                        -- concat just to fix warning about type (:
+                        temp[2] = temp[2] .. T.special_table['.']
 
-                        -- if is previous class
-                    elseif is_last_group or is_last_class then
+                        -- quantifier is related to group/class
+                    elseif (is_last_group or is_last_class) and not is_group then
                         merged[#merged][1] = last_merged[1] .. v[1]
                         table.insert(merged[#merged][3], removed_t)
-
                         is_added = true
-                        temp = { '', '', {} }
+
+                        -- other quantifiers
                     else
-                        temp[2] = U.trim(temp[2] .. ' ' .. removed_t)
-                    end
-
-                    if not is_added then
-                        table.insert(merged, temp)
-                        temp = { '', '', {} }
-                        is_added = true
+                        table.insert(temp[3], v[2])
                     end
                 end
 
@@ -313,6 +315,10 @@ function M.merge(tbl, merged, is_capturing)
                     end
                 end
 
+                if is_char_quantifier and last_elem ~= v[2] then
+                    table.insert(temp[3], v[2])
+                end
+
                 if temp[2] == 'Match' then
                     local removed_v = v[2]:gsub('Match ', '')
 
@@ -332,7 +338,7 @@ function M.merge(tbl, merged, is_capturing)
             end
 
             if v[1] == '#GROUP' then
-                merged = M.merge(v, merged, true)
+                merged = M.merge(v, merged, true, true)
             end
         end
 

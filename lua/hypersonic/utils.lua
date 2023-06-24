@@ -1,23 +1,5 @@
 local U = {}
 
----@param tbl table
----@param n number? number of indents (default 0)
----@return nil
-function U.print_table(tbl, n)
-    n = n or 0
-
-    print(string.rep('|   ', n) .. '{')
-
-    for _, v in pairs(tbl) do
-        if type(v) == 'table' then
-            U.print_table(v, n + 1)
-        else
-            print(string.rep('|   ', n + 1) .. v .. ',')
-        end
-    end
-    print(string.rep('|   ', n) .. '},')
-end
-
 ---insert element to specific depth
 ---@param tbl table
 ---@param ctx table|string

@@ -1,6 +1,7 @@
 // testing with
 
 ^hello
+.*?
 (\/)(.*?)(\/)
 \d*
 xy+

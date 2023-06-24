@@ -48,8 +48,7 @@ local function explain_class(tbl)
             -- class does not have "^" as "Start of string"
             if explained_char == T.char_table['^'] then
                 -- FIXME
-                local expl = idx == 1 and 'Match except' or 'Match ^'
-                explained_char = expl
+                explained_char = 'Match ^'
             end
 
             -- class does not have quantifiers
