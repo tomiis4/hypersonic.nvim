@@ -1,16 +1,17 @@
 // testing with
 
-^hello
-.*?
-(\/)(.*?)(\/)
-\d*
-xy+
-gr[ae]y
-^[a-zA-Z]+$
-^\S+$
+(ab(e|f)c)
 ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
 ^[a-z]@([0-9])
+(\/)(.*?)(\/)
+^[a-zA-Z]+$
+gr[ae]y
 [a-z(]]
+^hello
+^\S+$
+.*?
+\d*
+xy+
 
 
 // testing on

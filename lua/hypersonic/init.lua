@@ -129,7 +129,6 @@ local function display_window(title, content, highlights, position)
         style = "minimal",
         border = cfg.border,
         title = title,
-        title_pos = 'left',
         focusable = false,
     }
     local win = api.nvim_open_win(buf, false, win_opts)

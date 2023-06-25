@@ -30,7 +30,10 @@
 ## Known issues
 - Does not work in v`0.8.3` (only tested one)
 - Advanced regex is not working (e.g. `(?:)`)
-- Nested groups are not displaying correctly
+    - [ ] named capturing group (`(?:<name>)`)
+    - [ ] non-capturing group (`(?:)`)
+    - [ ] quantifer (`{1,3}`)
+    - [ ] look-around (`(?=)`, `(?!)`, `(?<=)`, `(?<!)`)
 
 ## Usage
 1. selecting
