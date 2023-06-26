@@ -218,12 +218,27 @@ local function check_capture(tbl, is_capturing)
     return tbl
 end
 
+local function fix_language()
+    -- if you are in cmdline don't cound filetype
+    local lang = vim.fn.getcmdpos() ~= 0 and '' or vim.bo.filetype
+
+    if lang == 'lua' then
+        U.escaped_char = '%'
+        U.meta_table = T.lua_meta_table
+    else
+        U.escaped_char = '\\'
+        U.meta_table = T.php_meta_table
+    end
+end
+
 ---@param tbl table
 ---@param merged table
 ---@param is_capturing boolean
 ---@param is_group boolean
 ---@return table, string?
 function M.merge(tbl, merged, is_capturing, is_group)
+    fix_language()
+
     ---@class temp
     local temp = { '', '', {} }
     local err = nil
@@ -319,7 +334,7 @@ function M.merge(tbl, merged, is_capturing, is_group)
                     table.insert(temp[3], v[2])
                 end
 
-                if temp[2] == 'Match' then
+                if temp[2] == 'Match' and not is_char_quantifier then
                     local removed_v = v[2]:gsub('Match ', '')
 
                     table.insert(temp[3], removed_v)
@@ -330,11 +345,16 @@ function M.merge(tbl, merged, is_capturing, is_group)
             if #temp[1] > 0 then
                 temp = check_capture(temp, is_capturing)
                 table.insert(merged, temp)
+
                 temp = { '', '', {} }
             end
 
             if v[1][2] == '#CLASS' then
                 table.insert(merged, merge_class(v))
+            end
+
+            if v[1][2] == '#QUANTIFIER' then
+                table.insert(merged, {v[2][1], v[2][2], {}})
             end
 
             if v[1] == '#GROUP' then

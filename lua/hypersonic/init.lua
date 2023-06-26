@@ -196,7 +196,7 @@ end
 function M.explain(param)
     local regex_title = param.fargs[1] or get_selected()
     if regex_title == nil then
-        vim.print('Please select correct RegExp')
+        vim.notify('Please select correct RegExp')
         return
     end
 

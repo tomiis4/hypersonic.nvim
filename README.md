@@ -32,7 +32,6 @@
 - Advanced regex is not working (e.g. `(?:)`)
     - [ ] named capturing group (`(?:<name>)`)
     - [ ] non-capturing group (`(?:)`)
-    - [ ] quantifer (`{1,3}`)
     - [ ] look-around (`(?=)`, `(?!)`, `(?<=)`, `(?<!)`)
 
 ## Usage

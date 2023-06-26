@@ -25,6 +25,13 @@ T.quantifiers = {
     '.'
 }
 
+T.lookahead = {
+    ['?='] = 'Positive lookahead',
+    ['!='] = 'Negative lookahead',
+    ['?<='] = 'Positive lookbehind',
+    ['?<!'] = 'Negative lookbehind',
+}
+
 T.special_table = {
     ['|'] = 'or',
     ['-'] = 'to',

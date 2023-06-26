@@ -4,6 +4,12 @@ local U = require('hypersonic.utils')
 local function fix_language(s)
     local lang = vim.bo.filetype
 
+    if lang == 'lua' then
+        U.escaped_char = '%'
+    else
+        U.escaped_char = '\\'
+    end
+
     if lang == 'python' then
         if U.starts_with(s, 'r"') or U.starts_with(s, 'r\'') then
             s = s:sub(2)
@@ -18,7 +24,10 @@ end
 local function is_error(str)
     -- replace all escaped () or []
     for _, v in pairs({ '%[', '%]', '%(', '%)' }) do
-        str = str:gsub(U.escaped_char .. v, '')
+        -- lua can't have 2 escaped char. next to each other
+        local escaped_char = U.escaped_char == '%' and '' or U.escaped_char
+
+        str = str:gsub(escaped_char .. v, '')
     end
 
     -- if ther isn't any content inside [], ()
@@ -58,6 +67,7 @@ function S.split_regex(str)
     local str_len = #str
 
     for i = 1, str_len do
+        local qant_start, qant_end = str:find('(%{%d,%d*%})')
         local char = str:sub(i, i)
 
         -- get groups
@@ -75,6 +85,12 @@ function S.split_regex(str)
                 depth = depth + 1
             end
 
+            -- get quantifier
+        elseif char == '{' and qant_start == i then
+            U.insert(main, depth, { '#QUANTIFIER' })
+            depth = depth + 1
+        elseif char == '}' and type(qant_end) == 'number' then
+            depth = depth - 1
 
             -- end groups
         elseif (char == ']' or char == ')') and not escape_char then
