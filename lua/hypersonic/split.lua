@@ -39,12 +39,15 @@ local function is_error(str)
     -- delete all characters except (,),[,]
     str = str:gsub('[^%(%)%[%]]', '')
 
-    if U.find(str, '%(') ~= U.find(str, '%)') then
-        return { true, 'Missing closing or opening square bracket' }
-    end
-
     if U.find(str, '%[') ~= U.find(str, '%]') then
         return { true, 'Missing closing or opening parenthesis' }
+    end
+
+    -- delete class & content
+    str = str:gsub('%[.-%]', '')
+
+    if U.find(str, '%(') ~= U.find(str, '%)') then
+        return { true, 'Missing closing or opening square bracket' }
     end
 
     return { false }
@@ -107,11 +110,11 @@ function S.split_regex(str)
     end
 
     local main = {}
-    local esc = U.escaped_char .. U.escaped_char
 
     local i = 1
     while i <= #str do
         local char = str:sub(i, i)
+        print(i)
 
         if char == U.escaped_char then
             local esc_char = str:sub(i + 1, i + 1)
@@ -120,9 +123,9 @@ function S.split_regex(str)
             i = i + 1
             table.insert(main, node)
         elseif char == '[' then
-            local close_idx = str:find('[^' .. esc .. ']%]', i) + 1
-            local class_value = str:sub(i, close_idx)
-            local node = get_node('group', class_value)
+            local close_idx = get_closing(str, '[', i)
+            local class_value = str:sub(i + 1, close_idx - 1)
+            local node = get_node('class', class_value)
 
             i = close_idx
             table.insert(main, node)
@@ -133,7 +136,7 @@ function S.split_regex(str)
 
             i = close_idx
             table.insert(main, node)
-        elseif char == '{' and str:find('%d+,%d*}',i) then
+        elseif char == '{' and str:find('%d+,%d*}', i) then
             local close_idx = get_closing(str, '{', i)
             local quantifier_value = str:sub(i + 1, close_idx - 1)
             local min, max = quantifier_value:match("(%d+),(%d*)")
