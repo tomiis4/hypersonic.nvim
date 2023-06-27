@@ -22,7 +22,6 @@ T.quantifiers = {
     '?',
     '*',
     '+',
-    '.'
 }
 
 T.lookahead = {

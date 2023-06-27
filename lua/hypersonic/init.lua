@@ -200,10 +200,12 @@ function M.explain(param)
         return
     end
 
-    local content, highlights = get_informations(regex_title)
-    local position = param.fargs[1] and 'editor' or 'cursor'
+    local s = Split(regex_title)
+    vim.print(s)
+    -- local content, highlights = get_informations(regex_title)
+    -- local position = param.fargs[1] and 'editor' or 'cursor'
 
-    display_window(regex_title, content, highlights, position)
+    -- display_window(regex_title, content, highlights, position)
 end
 
 return M
