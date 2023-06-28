@@ -2,6 +2,15 @@ local S = {}
 local U = require('hypersonic.utils')
 local T = require('hypersonic.tables')
 
+---@class Quantifier
+---@field min string
+---@field max string
+
+---@class Node
+---@field type 'character'|'escaped'|'class'|'group'|'quantifier'
+---@field value string
+---@field children Node|{}
+
 local function fix_language(s)
     local lang = vim.bo.filetype
 
@@ -101,7 +110,8 @@ end
 
 ---split regex to specific table
 ---@param str string
----@return table, string
+---@return Node{}
+---@return string
 function S.split_regex(str)
     str = fix_language(str)
     local error = is_error(str)
@@ -114,10 +124,10 @@ function S.split_regex(str)
     local i = 1
     while i <= #str do
         local char = str:sub(i, i)
-        print(i)
 
         if char == U.escaped_char then
             local esc_char = str:sub(i + 1, i + 1)
+
             local node = get_node('escaped', esc_char)
 
             i = i + 1
@@ -125,6 +135,7 @@ function S.split_regex(str)
         elseif char == '[' then
             local close_idx = get_closing(str, '[', i)
             local class_value = str:sub(i + 1, close_idx - 1)
+
             local node = get_node('class', class_value)
 
             i = close_idx
@@ -132,6 +143,7 @@ function S.split_regex(str)
         elseif char == '(' then
             local close_idx = get_closing(str, '(', i)
             local group_value = str:sub(i + 1, close_idx - 1)
+
             local node = get_node('group', '', S.split_regex(group_value))
 
             i = close_idx
@@ -140,6 +152,7 @@ function S.split_regex(str)
             local close_idx = get_closing(str, '{', i)
             local quantifier_value = str:sub(i + 1, close_idx - 1)
             local min, max = quantifier_value:match("(%d+),(%d*)")
+
             local node = get_node('quantifier', {
                     min = min,
                     max = max == '' and 'inf' or max

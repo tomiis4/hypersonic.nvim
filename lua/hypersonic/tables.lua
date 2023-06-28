@@ -33,7 +33,6 @@ T.lookahead = {
 
 T.special_table = {
     ['|'] = 'or',
-    ['-'] = 'to',
     ['?'] = '(optional)',
     ['*'] = '0 or more times',
     ['+'] = '1 or more times',

@@ -201,7 +201,9 @@ function M.explain(param)
     end
 
     local s = Split(regex_title)
-    vim.print(s)
+    local e = Explain(s)
+    -- vim.print(s)
+    vim.print(e)
     -- local content, highlights = get_informations(regex_title)
     -- local position = param.fargs[1] and 'editor' or 'cursor'
 
