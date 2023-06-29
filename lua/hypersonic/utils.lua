@@ -99,6 +99,19 @@ function U.find(s, value)
     return n
 end
 
+---@param tbl table
+---@return string
+function U.concat_or(tbl)
+    if #tbl == 1 then
+        return tbl[1]
+    else
+        local prev_value = table.remove(tbl)
+        local joined = table.concat(tbl, ", ")
+
+        return joined .. " or " .. prev_value
+    end
+end
+
 U.escaped_char = '\\'
 
 return U

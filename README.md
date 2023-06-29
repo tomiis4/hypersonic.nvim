@@ -145,7 +145,7 @@ require('hypersonic').setup({
 ```
 
 <details>
-<summary> How does it work </summary>
+<summary> How does it work (currently outdated) </summary>
 
 ## How does it work?
 

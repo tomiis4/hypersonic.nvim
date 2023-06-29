@@ -63,7 +63,6 @@ local function explain_char(char, type, quantifiers, is_class)
     return expl
 end
 
---- TODO: add range
 ---@param class_str string
 ---@param quantifiers string
 ---@return table<string>
@@ -79,29 +78,29 @@ local function explain_class(class_str, quantifiers)
     end
 
     -- explain class
-    local i = 1
-    while i <= #class_tbl do
-        local v = class_tbl[i]
+    local idx = 1
+    while idx <= #class_tbl do
+        local v = class_tbl[idx]
         local type = U.is_escape_char(v) and 'escaped' or 'character'
         local expl = explain_char(v, type, '', true).explanation:gsub('Match ', '')
 
         -- class use - as range
-        if expl == '-' and i ~= #class_tbl then
+        if expl == '-' and idx ~= #class_tbl then
             local last_elem = main[#main]
 
             -- get future chacater
-            v = class_tbl[i+1]
+            v = class_tbl[idx+1]
             type = U.is_escape_char(v) and 'escaped' or 'character'
             expl = explain_char(v, type, '', true).explanation:gsub('Match ', '')
 
             expl = 'range from ' .. last_elem .. ' to ' .. expl
 
 
-            i = i + 1
+            idx = idx + 1
             table.remove(main, #main)
         end
 
-        i = i + 1
+        idx = idx + 1
         table.insert(main, expl)
     end
 
