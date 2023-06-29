@@ -20,98 +20,14 @@ local function fix_language()
     end
 end
 
--- ---@param char string
--- ---@return string
--- local function explain_char(char)
---     if U.is_escape_char(char) then
---         local single_char = char:sub(2, 2)
---         local meta_explain = T.meta_table[single_char] or ('Match escaped ' .. char)
---
---         return meta_explain
---     else
---         local tables_explain = T.special_table[char] or T.char_table[char] or ('Match ' .. char)
---
---         return tables_explain
---     end
--- end
---
--- --- class have only normal/escaped characters, ranges, except
--- ---@param tbl table
--- ---@return table
--- local function explain_class(tbl)
---     local class = { { 'class #CLASS', tbl[1] } }
---
---     for idx, v in pairs(tbl) do
---         if v ~= '#CLASS' then
---             local explained_char = explain_char(v)
---
---             -- class does not have "or" as "|"
---             if explained_char == T.special_table['|'] then
---                 explained_char = 'Match |'
---             end
---
---             -- class does not have "^" as "Start of string"
---             if explained_char == T.char_table['^'] then
---                 explained_char = 'Match ^'
---             end
---
---             -- class does not have quantifiers
---             if U.has_value(T.quantifiers, v) then
---                 explained_char = 'Match ' .. v
---             end
---
---             -- if is "-" last element, it does not mean range
---             if idx == #tbl and explained_char == T.special_table['-'] then
---                 explained_char = 'Match -'
---             end
---
---             table.insert(class, { v, explained_char })
---
---             -- add "or"
---             local is_not_range = class[#class][2] ~= 'to'
---             local is_future_range = tbl[idx + 1] == '-'
---
---             if idx ~= #tbl and is_not_range and not is_future_range then
---                 table.insert(class, { '', 'or' })
---             end
---         end
---     end
---
---     return class
--- end
---
--- ---@param tbl table
--- ---@return table
--- local function explain_quantifier(tbl)
---     local res = { { tbl[1], tbl[1] } }
---     local num = ''
---
---     for i = 2, #tbl do
---         local v = tbl[i]
---
---         if v == ',' then
---             table.insert(res, { '{' .. num, 'Match ' .. num })
---             num = ''
---         elseif v:match('[0-9]') then
---             num = num .. v
---         end
---     end
---
---     res[#res][2] = res[#res][2] .. ' to ' .. num
---
---     res[#res][1] = res[#res][1] .. ',' .. num .. '}'
---     res[#res][2] = res[#res][2] .. (num == '' and 'inf' or '') .. ' times'
---
---     return res
--- end
-
 ---@param char string
 ---@param type 'character'|'escaped'|'group'|'class'|'quantifier'
+---@param quantifiers string
 ---@param is_class boolean?
 ---@return table
-local function explain_char(char, type, is_class)
+local function explain_char(char, type, quantifiers, is_class)
     is_class = is_class == true and true or false
-    local quantifiers = is_class and '' or char:match('[?+*]+')
+    quantifiers = is_class and '' or quantifiers
     local expl = {
         explanation = nil,
         children = {}
@@ -119,7 +35,9 @@ local function explain_char(char, type, is_class)
 
     -- explain characer
     if type == 'escaped' then
-        local meta_expl = U.meta_table[char:sub(1, 1)]
+        local split_i = is_class and 2 or 1
+        local meta_expl = U.meta_table[char:sub(split_i, split_i)]
+
         if meta_expl then
             expl.explanation = meta_expl
         else
@@ -146,23 +64,34 @@ local function explain_char(char, type, is_class)
 end
 
 --- TODO: add range
---- FIXME: fix +?* after class
 ---@param class_str string
+---@param quantifiers string
 ---@return table<string>
-local function explain_class(class_str)
+local function explain_class(class_str, quantifiers)
     local main = {}
 
     class_str = class_str:gsub('^%^', '')
     local class_tbl = {}
 
+    -- split class
     for c in string.gmatch(class_str, U.escaped_char .. '?.') do
         table.insert(class_tbl, c)
     end
 
+    -- explain class
     for _, v in ipairs(class_tbl) do
         local type = U.is_escape_char(v) and 'escaped' or 'character'
-        local expl = explain_char(v, type, true).explanation:gsub('Match ', '')
+        local expl = explain_char(v, type, '', true).explanation:gsub('Match ', '')
+
         table.insert(main, expl)
+    end
+
+    -- explain quantifier
+    local quant_len = quantifiers and #quantifiers or 0
+    for i = 1, quant_len do
+        local q = quantifiers:sub(i, i)
+
+        table.insert(main, T.special_table[q])
     end
 
     return main
@@ -174,20 +103,16 @@ end
 function M.explain(tbl, main)
     fix_language()
     main = main or {}
-    vim.print('---------------------')
-    vim.print(tbl)
-    vim.print('---------------------')
 
     for idx = 1, #tbl do
         ---@type Node
         local v = tbl[idx]
-        local type, value, children = v.type, v.value, v.children
+        local type, value, children, quantifiers = v.type, v.value, v.children, v.quantifiers
 
         if type == 'escaped' or type == 'character' then
-            print(value)
-            local expl = explain_char(value, type)
+            local expl = explain_char(value, type, quantifiers)
             local node = {
-                value = value,
+                value = value .. quantifiers,
                 explanation = expl.explanation,
                 children = expl.children
             }
@@ -203,18 +128,20 @@ function M.explain(tbl, main)
             table.insert(main[#main].children, q_explanation)
         end
 
+        -- FIXME: escaped chars are not working
         if type == 'class' then
             local class_start = value:sub(1, 1) == '^' and 'neither' or 'either'
 
             local node = {
-                value = '[' .. value .. ']',
+                value = '[' .. value .. ']' .. quantifiers,
                 explanation = 'Match ' .. class_start,
-                children = explain_class(value)
+                children = explain_class(value, quantifiers)
             }
             table.insert(main, node)
         end
 
         if type == 'group' then
+            children[1].quantifiers = quantifiers
             main = M.explain(children, main)
         end
     end

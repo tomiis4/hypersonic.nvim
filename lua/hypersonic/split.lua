@@ -10,6 +10,7 @@ local T = require('hypersonic.tables')
 ---@field type 'character'|'escaped'|'class'|'group'|'quantifier'
 ---@field value string
 ---@field children Node|{}
+---@field quantifiers string
 
 local function fix_language(s)
     local lang = vim.bo.filetype
@@ -70,7 +71,8 @@ local function get_node(type, value, children)
     return {
         type = type,
         value = value,
-        children = children or {}
+        children = children or {},
+        quantifiers = ''
     }
 end
 
@@ -110,15 +112,17 @@ end
 
 ---split regex to specific table
 ---@param str string
----@return Node{}
+---@return Node[]
 ---@return string
 function S.split_regex(str)
     str = fix_language(str)
     local error = is_error(str)
     if error[1] then
         str = ''
+        return { get_node('', '', {}) }, error[2]
     end
 
+    ---@type Node[]
     local main = {}
 
     local i = 1
@@ -162,7 +166,7 @@ function S.split_regex(str)
             table.insert(main, node)
         elseif U.has_value(T.quantifiers, char) then
             local prev_node = main[#main]
-            prev_node.value = prev_node.value .. char
+            prev_node.quantifiers = prev_node.quantifiers .. char
         else
             local node = get_node('character', char)
             table.insert(main, node)

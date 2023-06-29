@@ -1,27 +1,5 @@
 local U = {}
 
----insert element to specific depth
----@param tbl table
----@param ctx table|string
----@param depth number
----@return table
-function U.insert(tbl, depth, ctx)
-    local last_item = tbl
-
-    -- if is last item of LAST_ITEM table, set it as last item, else make new table with idx+
-    for _ = 1, depth do
-        if type(last_item[#last_item]) == 'table' then
-            last_item = last_item[#last_item]
-        else
-            last_item[#last_item + 1] = {}
-            last_item = last_item[#last_item]
-        end
-    end
-
-    table.insert(last_item, ctx)
-    return tbl
-end
-
 ---@param char string
 ---@return boolean
 function U.is_escape_char(char)
@@ -87,8 +65,8 @@ function U.get_longest_key(tbl)
     local n = 0
 
     for _, v in pairs(tbl) do
-        if #v[1] > n then
-            n = #v[1]
+        if #v.value > n then
+            n = #v.value
         end
     end
 

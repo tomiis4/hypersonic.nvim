@@ -1,5 +1,7 @@
- testing with ==\
+testing with ==\
 
+[\w]+
+[\w-]{2,4}
 \{\d,\d*\}
 a{12,}v
 [a(b]
@@ -18,7 +20,7 @@ x(?=y)
 \d*
 xy+
 [a-z]+
-(x)+
+ia(x)+
 
 //== testing on ==\\
 
