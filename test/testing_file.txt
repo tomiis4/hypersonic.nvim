@@ -1,5 +1,6 @@
 testing with ==\
 
+[a-bc-d-]
 [\w]+
 [\w-]{2,4}
 \{\d,\d*\}

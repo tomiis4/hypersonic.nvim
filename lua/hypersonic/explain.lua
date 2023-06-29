@@ -79,10 +79,29 @@ local function explain_class(class_str, quantifiers)
     end
 
     -- explain class
-    for _, v in ipairs(class_tbl) do
+    local i = 1
+    while i <= #class_tbl do
+        local v = class_tbl[i]
         local type = U.is_escape_char(v) and 'escaped' or 'character'
         local expl = explain_char(v, type, '', true).explanation:gsub('Match ', '')
 
+        -- class use - as range
+        if expl == '-' and i ~= #class_tbl then
+            local last_elem = main[#main]
+
+            -- get future chacater
+            v = class_tbl[i+1]
+            type = U.is_escape_char(v) and 'escaped' or 'character'
+            expl = explain_char(v, type, '', true).explanation:gsub('Match ', '')
+
+            expl = 'range from ' .. last_elem .. ' to ' .. expl
+
+
+            i = i + 1
+            table.remove(main, #main)
+        end
+
+        i = i + 1
         table.insert(main, expl)
     end
 
@@ -128,7 +147,6 @@ function M.explain(tbl, main)
             table.insert(main[#main].children, q_explanation)
         end
 
-        -- FIXME: escaped chars are not working
         if type == 'class' then
             local class_start = value:sub(1, 1) == '^' and 'neither' or 'either'
 
