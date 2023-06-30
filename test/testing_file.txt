@@ -1,5 +1,6 @@
 testing with ==\
 
+xyz+
 [a\wbc]
 [a-bc-d-]
 [\w]+
@@ -20,7 +21,6 @@ x(?=y)
 ^\S+$
 .*?
 \d*
-xy+
 [a-z]+
 ia(x)+
 

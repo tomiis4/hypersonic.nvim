@@ -61,6 +61,8 @@ local function get_informations(regex)
             children = {}
         } } or merge_tbl
 
+        vim.print(merge_tbl)
+
 
     -- format 3-dimension table to 1-dimension
     for _, v in pairs(modified) do

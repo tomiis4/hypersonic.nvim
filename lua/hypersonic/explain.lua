@@ -89,7 +89,7 @@ local function explain_class(class_str, quantifiers)
             local last_elem = main[#main]
 
             -- get future chacater
-            v = class_tbl[idx+1]
+            v = class_tbl[idx + 1]
             type = U.is_escape_char(v) and 'escaped' or 'character'
             expl = explain_char(v, type, '', true).explanation:gsub('Match ', '')
 

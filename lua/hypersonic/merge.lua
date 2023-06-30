@@ -431,23 +431,23 @@ function M.merge(tbl, main)
     fix_language()
     main = main or {}
 
-    for idx = 1, #tbl do
-        local single = {}
+    local single = {}
 
+    for idx = 1, #tbl do
         ---@type Merged
         local v = tbl[idx]
         local value, children, explanation = v.value, v.children, v.explanation
 
-        -- if it's class (Match either, Match neither)
-        if explanation:find('either') then
+        local is_class = explanation:find('either') ~= nil
+
+        if is_class then
             children = merge_class(children)
-        else
-            -- FIXME: this won't work, we need to check for childrens
+        end
+
+        if not is_class then
             local char = explanation:gsub('Match ', '')
 
-            if #char == 1 then
-                table.insert(single, char)
-            else
+            if #children >= 1 or #char > 1 then
                 if #single > 0 then
                     table.insert(main, {
                         value = table.concat(single),
@@ -461,6 +461,19 @@ function M.merge(tbl, main)
                     value = value,
                     children = children,
                     explanation = explanation
+                })
+            end
+
+            if #children == 0 and #char == 1 then
+                table.insert(single, char)
+            end
+
+            if idx == #tbl and #single > 0 then
+                vim.prnit('Y', children)
+                table.insert(main, {
+                    value = table.concat(single),
+                    children = children,
+                    explanation = children,
                 })
             end
         end
