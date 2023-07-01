@@ -24,8 +24,9 @@ end
 ---@param type 'character'|'escaped'|'group'|'class'|'quantifier'
 ---@param quantifiers string
 ---@param is_class boolean?
+---@param is_group boolean?
 ---@return table
-local function explain_char(char, type, quantifiers, is_class)
+local function explain_char(char, type, quantifiers, is_class, is_group)
     is_class = is_class == true and true or false
     quantifiers = is_class and '' or quantifiers
     local expl = {
@@ -59,6 +60,10 @@ local function explain_char(char, type, quantifiers, is_class)
 
         table.insert(expl.children, T.special_table[q])
     end
+
+    local match_type = is_group and 'Capture' or 'Match'
+    expl.explanation = expl.explanation:gsub('Match', match_type)
+    print(match_type)
 
     return expl
 end
@@ -117,8 +122,9 @@ end
 
 ---@param tbl Node[]
 ---@param main Explained[]?
+---@param is_group boolean?
 ---@return table
-function M.explain(tbl, main)
+function M.explain(tbl, main, is_group)
     fix_language()
     main = main or {}
 
@@ -128,7 +134,7 @@ function M.explain(tbl, main)
         local type, value, children, quantifiers = v.type, v.value, v.children, v.quantifiers
 
         if type == 'escaped' or type == 'character' then
-            local expl = explain_char(value, type, quantifiers)
+            local expl = explain_char(value, type, quantifiers, false, is_group)
             local node = {
                 value = value .. quantifiers,
                 explanation = expl.explanation,
@@ -159,7 +165,7 @@ function M.explain(tbl, main)
 
         if type == 'group' then
             children[1].quantifiers = quantifiers
-            main = M.explain(children, main)
+            main = M.explain(children, main, true)
         end
     end
 

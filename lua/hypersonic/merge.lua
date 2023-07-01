@@ -438,10 +438,32 @@ function M.merge(tbl, main)
         local v = tbl[idx]
         local value, children, explanation = v.value, v.children, v.explanation
 
+        local is_group = explanation:find('Capture') ~= nil
         local is_class = explanation:find('either') ~= nil
 
         if is_class then
+            if #single > 0 then
+                local concat = table.concat(single)
+                table.insert(main, {
+                    value = concat,
+                    children = {},
+                    explanation = 'Match ' .. concat,
+                })
+            end
+            single = {}
             children = merge_class(children)
+        end
+
+        if is_group then
+            if #single > 0 then
+                local concat = table.concat(single)
+                table.insert(main, {
+                    value = concat,
+                    children = {},
+                    explanation = 'Capture ' .. concat,
+                })
+            end
+            single = {}
         end
 
         if not is_class then
@@ -468,18 +490,21 @@ function M.merge(tbl, main)
                 table.insert(single, char)
             end
 
-            if idx == #tbl and #single > 0 then
-                vim.prnit('Y', children)
-                table.insert(main, {
-                    value = table.concat(single),
-                    children = children,
-                    explanation = children,
-                })
-            end
         end
     end
 
+    if #single > 0 then
+        local concat = table.concat(single)
+        table.insert(main, {
+            value = concat,
+            children = {},
+            explanation = 'Match ' .. concat,
+        })
+        single = {}
+    end
+
     return main
+    -- return tbl
 end
 
 return M
