@@ -63,7 +63,6 @@ local function explain_char(char, type, quantifiers, is_class, is_group)
 
     local match_type = is_group and 'Capture' or 'Match'
     expl.explanation = expl.explanation:gsub('Match', match_type)
-    print(match_type)
 
     return expl
 end
