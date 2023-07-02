@@ -29,6 +29,7 @@
 
 ## Known issues
 - Does not work in v`0.8.3` (only tested one)
+- Nested groups does not display correctly
 - Advanced regex is not working (e.g. `(?:)`)
     - [ ] named capturing group (`(?:<name>)`)
     - [ ] non-capturing group (`(?:)`)
@@ -142,6 +143,7 @@ require('hypersonic').setup({
 |
 \---test
         testing_file.txt
+        testing_file.lua
 ```
 
 <details>
@@ -341,6 +343,20 @@ local meta_table = {
 <summary> output </summary>
 
 ```lua
+{ 
+    {
+        explanation = "Match gr",
+        value = "gr"
+    }, 
+    {
+        explanation = "Match either",
+        value = "[ae]"
+    }, 
+    {
+        explanation = "Match y",
+        value = "y"
+    }
+}
 ```
 
 </details>

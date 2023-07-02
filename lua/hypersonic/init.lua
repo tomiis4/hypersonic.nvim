@@ -61,7 +61,6 @@ local function get_informations(regex)
         children = {}
     } } or merge_tbl
 
-    -- vim.print(modified)
     -- format 3-dimension table to 1-dimension
     for _, v in pairs(modified) do
         local value, explanation, children = v.value, v.explanation, v.children
@@ -73,8 +72,8 @@ local function get_informations(regex)
         local key = U.wrap(value, wrapping) .. ': ' .. padding
 
         -- if type(explanation) ~= 'table' then
-            table.insert(formatted, key .. explanation)
-            table.insert(highlight, { #formatted - 1, #key })
+        table.insert(formatted, key .. explanation)
+        table.insert(highlight, { #formatted - 1, #key })
         -- end
 
         -- if it have another values stored in temp3

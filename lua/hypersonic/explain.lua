@@ -163,7 +163,7 @@ function M.explain(tbl, main, is_group)
         end
 
         if type == 'group' then
-            children[1].quantifiers = quantifiers
+            children[#children].quantifiers = quantifiers
             main = M.explain(children, main, true)
         end
     end

@@ -16,7 +16,7 @@ a{12,}v
 (ab(e|f)c)
 gr[ae]y
 [a-z(]]
-x(?=y)
+  x(?=y)
 ^hello
 ^\S+$
 .*?
@@ -30,34 +30,3 @@ htpps://github.com/tomiis4
 testing.mail@gmail.com
 C:\path\to\x
 C:/path/to/y
-
-
-//== NOTHING ==\\
-{
-    {
-        children = {},
-        type = "character",
-        value = "g"
-    },
-    {
-        children = {},
-        type = "character",
-        value = "r"
-    },
-    {
-        children = {},
-        type = "class",
-        value = "ae"
-    },
-    {
-        children = {},
-        type = "character",
-        value = "y"
-    }
-}
-
-- [x] character
-- [x] escaped
-- [x] quantifier
-- [x] class
-- [ ] group

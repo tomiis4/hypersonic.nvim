@@ -50,14 +50,14 @@ local function is_error(str)
     str = str:gsub('[^%(%)%[%]]', '')
 
     if U.find(str, '%[') ~= U.find(str, '%]') then
-        return { true, 'Missing closing or opening parenthesis' }
+        return { true, 'Error: Missing closing or opening parenthesis' }
     end
 
     -- delete class & content
     str = str:gsub('%[.-%]', '')
 
     if U.find(str, '%(') ~= U.find(str, '%)') then
-        return { true, 'Missing closing or opening square bracket' }
+        return { true, 'Error: Missing closing or opening square bracket' }
     end
 
     return { false }
@@ -158,9 +158,9 @@ function S.split_regex(str)
             local min, max = quantifier_value:match("(%d+),(%d*)")
 
             local node = get_node('quantifier', {
-                    min = min,
-                    max = max == '' and 'inf' or max
-                })
+                min = min,
+                max = max == '' and 'inf' or max
+            })
 
             i = close_idx
             table.insert(main, node)
