@@ -53,31 +53,34 @@ local function get_informations(regex)
 
     local split_tbl, err = Split(regex)
     local expl_tbl = Explain(split_tbl, {})
-    local merged, m_err = Merge(expl_tbl, {}, false, false)
-    local modified = err and { { err, '', {} } } or m_err and { { m_err, '', {} } } or merged
+    local merge_tbl = Merge(expl_tbl, {})
+
+    local modified = err and { {
+        value = err,
+        explanation = '',
+        children = {}
+    } } or merge_tbl
 
     -- format 3-dimension table to 1-dimension
-    for _, merged_v in pairs(modified) do
-        local calc_padd = U.get_longest_key(modified) - #merged_v[1]
+    for _, v in pairs(modified) do
+        local value, explanation, children = v.value, v.explanation, v.children
+
+        local calc_padd = U.get_longest_key(modified) - #value
         local padding = cfg.add_padding and (' '):rep(calc_padd) or ''
         local wrapping = cfg.wrapping
 
-        local key = U.wrap(merged_v[1], wrapping) .. ': ' .. padding
+        local key = U.wrap(value, wrapping) .. ': ' .. padding
 
-        table.insert(formatted, key .. merged_v[2])
+        -- if type(explanation) ~= 'table' then
+        table.insert(formatted, key .. explanation)
         table.insert(highlight, { #formatted - 1, #key })
+        -- end
 
         -- if it have another values stored in temp3
-        for temp_i, temp_v in pairs(merged_v[3]) do
-            local separated = U.split(temp_v, '<br>')
+        for child_i, child in pairs(children) do
+            local line_num = (' '):rep(3) .. child_i .. ') '
 
-            for sep_i, sep in pairs(separated) do
-                -- if is it first element, add number else does not add it
-                local sep_number = sep_i == 1 and (' '):rep(3) .. temp_i .. ') '
-                    or (' '):rep(3 + 3)
-
-                table.insert(formatted, sep_number .. sep)
-            end
+            table.insert(formatted, line_num .. child)
         end
     end
 

@@ -29,6 +29,7 @@
 
 ## Known issues
 - Does not work in v`0.8.3` (only tested one)
+- Nested groups does not display correctly
 - Advanced regex is not working (e.g. `(?:)`)
     - [ ] named capturing group (`(?:<name>)`)
     - [ ] non-capturing group (`(?:)`)
@@ -78,7 +79,7 @@ use 'tomiis4/Hypersonic.nvim'
 <summary> Using lazy </summary>
 
 ```lua
- {
+{
     'tomiis4/Hypersonic.nvim',
     event = "CmdlineEnter",
     cmd = "Hypersonic",
@@ -142,6 +143,7 @@ require('hypersonic').setup({
 |
 \---test
         testing_file.txt
+        testing_file.lua
 ```
 
 <details>
@@ -153,6 +155,7 @@ require('hypersonic').setup({
 - Take regex from current line.
 - Spit to specified format.
 - Explain that regex.
+- Merge it for better readability.
 - Return result in floating window.
 
 
@@ -170,16 +173,24 @@ gr[ae]y
 <details>
 <summary> output </summary>
 
-```js
+```lua
 {
-    "g",
-    "r",
     {
-        "#CLASS", // #CLASS or #GROUP
-        "a",
-        "e",
+        type = "character",
+        value = "g"
     },
-    "y",
+    {
+        type = "character",
+        value = "r"
+    },
+    {
+        type = "class",
+        value = "ae"
+    },
+    {
+        type = "character",
+        value = "y"
+    }
 }
 ```
 
@@ -202,19 +213,37 @@ local meta_table = {
 
 </details>
 
-- create new table `main={}`, variable `depth=0`, `escape_char=false`
-- loop for each char
-    - `(`, `[`
-        - `depth++`
-        - create new table at `depth`
-        - add `#CLASS` or `#GROUP` to new table
-    - `)`, `]`
-        - `depth--`
-    - `\`
-        - `escape_char=true`
-        - if `escape_char` will be `true` and next char. is in meta characters table
-            - put `\<char>`, else put only char
+<details>
+<summary> Node </summary>
 
+```lua
+{
+    type = 'character'|'escaped'|'class'|'group'|'quantifier',
+    value = '',
+    children = Node|{},
+    quantifiers = ''
+}
+```
+
+</details>
+
+- create new table `main={}` (type: _Node[]_)
+- loop for each char
+    - `\`
+        - add future char to `main`
+        - skip that char
+    - `[`
+        - get closing `]`
+        - add content between `[]` to `main`
+        - skip to closing `]`
+    - `(`
+        - get closing `)`
+        - add split content between `()` to `children`
+        - skip to closing `)`
+    - `?`|`+`|`*`
+        - add char to previous `Node.quantifiers`
+    - other
+        - create Node with that char
 
 ### Explain
 
@@ -223,14 +252,22 @@ local meta_table = {
 
 ```js
 {
-    'g',
-    'r',
     {
-        '#CLASS', // #CLASS or #GROUP
-        'a',
-        'e',
+        type = "character",
+        value = "g"
     },
-    'y',
+    {
+        type = "character",
+        value = "r"
+    },
+    {
+        type = "class",
+        value = "ae"
+    },
+    {
+        type = "character",
+        value = "y"
+    }
 }
 ```
 
@@ -241,45 +278,38 @@ local meta_table = {
 
 ```lua
 {
-    { '', 'gr[ae]y' },
-    { 'g',     'Match g' },
-    { 'r',     'Match r' },
     {
-        { 'class #CLASS', '#CLASS' },
-        { 'a',            'Match a', },
-        { '',             'or', },
-        { 'e',            'Match e', },
+        explanation = "Match g",
+        value = "g"
     },
-    { 'y', 'Match y', }
+    {
+        explanation = "Match r",
+        value = "r"
+    },
+    {
+        children = { "a", "e" },
+        explanation = "Match either",
+        value = "[ae]"
+    },
+    {
+        explanation = "Match y",
+        value = "y"
+    }
 }
 ```
 
 </details>
 
-- create `result` table
-    - idx 1 = title (format: `Regex: <regex>`)
-- recursively loop trough `input`
-    - global
-        - if character `* + ?`
-            - edit last character to specific type
-
-    - non class
-        - if char will start with `\`, get info from `meta_table`
-        - else put char in table
-
-    - class
-        - if characters next to each-other, its `or`
-        - if character `-` make range
-- types
-    - `.`, any character
-    - `|`, or
-    - `?`, zero or one x?
-    - `*`, 0 or more x*
-    - `+`, 1 or more x+
-    - `-`, from-to
-    - `$`, end of string
-    - `^`, start of string
-
+- create new table `main={}` (type: _Explained[]_)
+- loop for each Node
+    - `type == escaped | character`
+        - explain character
+        - check if is in any table
+            - return that value
+    - `type == class`
+        - call `explain_class`
+    - `type == group`
+        - call `explain`
 
 ### Merge
 
@@ -288,16 +318,23 @@ local meta_table = {
 
 ```js
 {
-    { '', 'gr[ae]y' },
-    { 'g',     "Match g' },
-    { 'r',     "Match r' },
     {
-        { 'class #CLASS', '#CLASS' },
-        { 'a',            'Match a' },
-        { '',             'gr' },
-        { 'e',            'Match e' },
+        explanation = "Match g",
+        value = "g"
     },
-    { 'y', 'Match y', }
+    {
+        explanation = "Match r",
+        value = "r"
+    },
+    {
+        children = { "a", "e" },
+        explanation = "Match either",
+        value = "[ae]"
+    },
+    {
+        explanation = "Match y",
+        value = "y"
+    }
 }
 ```
 
@@ -307,13 +344,20 @@ local meta_table = {
 <summary> output </summary>
 
 ```lua
-{
-    {'',  'gr[ae]y'},
-    {'gr',     'Match gr'},
-    {'[ae]',   'Match either',
-        {'one character from list ae'},
-    },
-    {'y',      'Match "y"'}
+{ 
+    {
+        explanation = "Match gr",
+        value = "gr"
+    }, 
+    {
+        explanation = "Match either",
+        children = { "a or e" },
+        value = "[ae]"
+    }, 
+    {
+        explanation = "Match y",
+        value = "y"
+    }
 }
 ```
 
@@ -326,16 +370,12 @@ local meta_table = {
 +-gr[ae]y------------------------------+
 | "gr":   Match gr                     |
 | "[ae]": Match either                 |
-|    1) one chacarcter from list ae    |
+|    1) a or e                         |
 | "y":    Match y                      |
 +--------------------------------------+
 ```
 
 </details>
-
-
-- `v`: 1 = key, 2 = explanation
-- `temp`: 1 = key, 2 = value, 3 = second data
 
 </details>
 

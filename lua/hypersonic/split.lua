@@ -1,5 +1,16 @@
 local S = {}
 local U = require('hypersonic.utils')
+local T = require('hypersonic.tables')
+
+---@class Quantifier
+---@field min string
+---@field max string
+
+---@class Node
+---@field type 'character'|'escaped'|'class'|'group'|'quantifier'
+---@field value string
+---@field children Node|{}
+---@field quantifiers string
 
 local function fix_language(s)
     local lang = vim.bo.filetype
@@ -38,87 +49,130 @@ local function is_error(str)
     -- delete all characters except (,),[,]
     str = str:gsub('[^%(%)%[%]]', '')
 
-    if U.find(str, '%(') ~= U.find(str, '%)') then
-        return { true, 'Missing closing or opening square bracket' }
+    if U.find(str, '%[') ~= U.find(str, '%]') then
+        return { true, 'Error: Missing closing or opening parenthesis' }
     end
 
-    if U.find(str, '%[') ~= U.find(str, '%]') then
-        return { true, 'Missing closing or opening parenthesis' }
+    -- delete class & content
+    str = str:gsub('%[.-%]', '')
+
+    if U.find(str, '%(') ~= U.find(str, '%)') then
+        return { true, 'Error: Missing closing or opening square bracket' }
     end
 
     return { false }
 end
 
+---@param type string
+---@param value string|table
+---@param children table?
+---@return table
+local function get_node(type, value, children)
+    return {
+        type = type,
+        value = value,
+        children = children or {},
+        quantifiers = ''
+    }
+end
+
+---@param s string
+---@param type '('|'{'|'['
+---@param idx number
+---@return number
+local function get_closing(s, type, idx)
+    local n = 0
+    local is_escaped = false
+    local opposite = {
+        ['('] = ')',
+        ['['] = ']',
+        ['{'] = '}',
+    }
+
+    for i = idx, #s do
+        local char = s:sub(i, i)
+
+        if char == type and not is_escaped then
+            n = n + 1
+        elseif char == opposite[type] and not is_escaped then
+            n = n - 1
+
+            if n == 0 then
+                return i
+            end
+        elseif char == U.escaped_char then
+            is_escaped = true
+        else
+            is_escaped = false
+        end
+    end
+
+    return -1
+end
+
 ---split regex to specific table
 ---@param str string
----@return table, string
+---@return Node[]
+---@return string
 function S.split_regex(str)
     str = fix_language(str)
     local error = is_error(str)
     if error[1] then
         str = ''
+        return { get_node('', '', {}) }, error[2]
     end
 
-    local main = { { '', str } }
-    local depth = 0
-    local escape_char = false
-    local is_class = false
+    ---@type Node[]
+    local main = {}
 
-    local str_len = #str
-
-    for i = 1, str_len do
-        local qant_start, qant_end = str:find('(%{%d,%d*%})')
+    local i = 1
+    while i <= #str do
         local char = str:sub(i, i)
 
-        -- get groups
-        if (char == '[' or char == '(') and not escape_char then
-            local label = char == '[' and '#CLASS' or '#GROUP'
+        if char == U.escaped_char then
+            local esc_char = str:sub(i + 1, i + 1)
 
-            if char == '[' then
-                is_class = true
-            end
+            local node = get_node('escaped', esc_char)
 
-            if char == '(' and is_class then
-                U.insert(main, depth, char)
-            else
-                U.insert(main, depth, { label })
-                depth = depth + 1
-            end
+            i = i + 1
+            table.insert(main, node)
+        elseif char == '[' then
+            local close_idx = get_closing(str, '[', i)
+            local class_value = str:sub(i + 1, close_idx - 1)
 
-            -- get quantifier
-        elseif char == '{' and qant_start == i then
-            U.insert(main, depth, { '#QUANTIFIER' })
-            depth = depth + 1
-        elseif char == '}' and type(qant_end) == 'number' then
-            depth = depth - 1
+            local node = get_node('class', class_value)
 
-            -- end groups
-        elseif (char == ']' or char == ')') and not escape_char then
-            if char == ']' then
-                is_class = false
-            end
+            i = close_idx
+            table.insert(main, node)
+        elseif char == '(' then
+            local close_idx = get_closing(str, '(', i)
+            local group_value = str:sub(i + 1, close_idx - 1)
 
-            if is_class and char == ')' then
-                U.insert(main, depth, char)
-                depth = depth + 1
-            end
+            local node = get_node('group', '', S.split_regex(group_value))
 
-            depth = depth - 1
+            i = close_idx
+            table.insert(main, node)
+        elseif char == '{' and str:find('%d+,%d*}', i) then
+            local close_idx = get_closing(str, '{', i)
+            local quantifier_value = str:sub(i + 1, close_idx - 1)
+            local min, max = quantifier_value:match("(%d+),(%d*)")
 
-            -- get escape
-        elseif char == U.escaped_char then
-            escape_char = true
+            local node = get_node('quantifier', {
+                min = min,
+                max = max == '' and 'inf' or max
+            })
 
-            -- add escape
-        elseif escape_char then
-            escape_char = false
-            U.insert(main, depth, U.escaped_char .. char)
-
-            -- get normal chars
+            i = close_idx
+            table.insert(main, node)
+        elseif U.has_value(T.quantifiers, char) then
+            local prev_node = main[#main]
+            prev_node.quantifiers = prev_node.quantifiers .. char
         else
-            escape_char = false
-            U.insert(main, depth, char)
+            local node = get_node('character', char)
+            table.insert(main, node)
         end
+
+        i = i + 1
     end
 
     return main, error[2]
