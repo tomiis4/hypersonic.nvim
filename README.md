@@ -79,7 +79,7 @@ use 'tomiis4/Hypersonic.nvim'
 <summary> Using lazy </summary>
 
 ```lua
- {
+{
     'tomiis4/Hypersonic.nvim',
     event = "CmdlineEnter",
     cmd = "Hypersonic",
@@ -147,7 +147,7 @@ require('hypersonic').setup({
 ```
 
 <details>
-<summary> How does it work (currently outdated) </summary>
+<summary> How does it work </summary>
 
 ## How does it work?
 
@@ -155,6 +155,7 @@ require('hypersonic').setup({
 - Take regex from current line.
 - Spit to specified format.
 - Explain that regex.
+- Merge it for better readability.
 - Return result in floating window.
 
 
@@ -350,6 +351,7 @@ local meta_table = {
     }, 
     {
         explanation = "Match either",
+        children = { "a or e" },
         value = "[ae]"
     }, 
     {
