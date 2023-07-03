@@ -3,7 +3,7 @@
 
 //== testing with ==\
 
-(%{%d,%d*%})
+%{%d,%d*%}
 a{1,156}s{1,5}
 a{1,5}ahoj
 ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
@@ -30,3 +30,37 @@ C:/path/to/y
 
 
 ]]
+X = {
+    {
+        type = "group",
+        value = "",
+        quantifiers = "",
+        children = {
+            {
+                type = "character",
+                value = "x",
+                children = {},
+                quantifiers = "",
+            },
+            {
+                type = "group",
+                value = "",
+                quantifiers = "",
+                children = {
+                    {
+                        type = "character",
+                        value = "a",
+                        children = {},
+                        quantifiers = "",
+                    }
+                },
+            },
+            {
+                type = "character",
+                value = "y",
+                children = {},
+                quantifiers = "",
+            }
+        },
+    }
+}

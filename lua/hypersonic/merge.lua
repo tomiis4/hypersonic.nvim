@@ -72,7 +72,7 @@ function M.merge(tbl, main)
     }
 
     local function clear_single()
-        if #temp.char > 0 then
+        if #temp.char > 0 or #temp.children > 0 then
             local concat = table.concat(temp.char)
             table.insert(main, {
                 value = concat,
