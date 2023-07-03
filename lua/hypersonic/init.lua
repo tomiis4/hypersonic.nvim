@@ -52,8 +52,11 @@ local function get_informations(regex)
     local highlight = {}
 
     local split_tbl, err = Split(regex)
+    -- vim.print(split_tbl)
     local expl_tbl = Explain(split_tbl, {})
+    -- vim.print(expl_tbl)
     local merge_tbl = Merge(expl_tbl, {})
+    -- vim.print(merge_tbl)
 
     local modified = err and { {
         value = err,
