@@ -8,6 +8,12 @@ Good luck.
 
 ]]
 
+---@class Temp
+---@field char table
+---@field children table
+---@field type string
+---@field nesting number
+
 local T = require('hypersonic.tables')
 local U = require('hypersonic.utils')
 local M = {}
@@ -65,19 +71,22 @@ function M.merge(tbl, main)
     fix_language()
     main = main or {}
 
+    ---@type Temp
     local temp = {
         char = {},
         children = {},
         type = '',
+        nesting = 0
     }
 
-    local function clear_single()
+    local function clear_single(changed_nesting)
         if #temp.char > 0 or #temp.children > 0 then
             local concat = table.concat(temp.char)
             table.insert(main, {
                 value = concat,
                 children = temp.children,
                 explanation = temp.type .. ' ' .. concat,
+                nesting = temp.nesting
             })
         end
 
@@ -85,24 +94,33 @@ function M.merge(tbl, main)
             char = {},
             children = {},
             type = '',
+            nesting = changed_nesting and 0 or temp.nesting
         }
     end
 
     for idx = 1, #tbl do
         ---@type Merged
         local v = tbl[idx]
-        local value, children, explanation = v.value, v.children, v.explanation
+        local value, children = v.value, v.children
+        local explanation, nesting = v.explanation, v.nesting
+
         local char = explanation:gsub('Match ', ''):gsub('Capture ', '')
 
         local is_group = explanation:find('Capture') ~= nil
         local is_class = explanation:find('either') ~= nil
+
+        if temp.nesting ~= nesting then
+            clear_single(true)
+            temp.nesting = nesting
+        end
 
         if is_class then
             clear_single()
             table.insert(main, {
                 value = value,
                 children = merge_class(children),
-                explanation = explanation
+                explanation = explanation,
+                nesting = nesting
             })
         end
 
@@ -140,7 +158,8 @@ function M.merge(tbl, main)
                 table.insert(main, {
                     value = value,
                     children = children,
-                    explanation = explanation
+                    explanation = explanation,
+                    nesting = nesting
                 })
             end
         end

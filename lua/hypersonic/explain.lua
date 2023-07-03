@@ -6,6 +6,7 @@ local M = {}
 ---@field value string
 ---@field explanation string
 ---@field children table<string>|{}
+---@field nesting number
 
 local function fix_language()
     -- if you are in cmdline don't cound filetype
@@ -122,8 +123,9 @@ end
 ---@param tbl Node[]
 ---@param main Explained[]?
 ---@param is_group boolean?
+---@param nesting number?
 ---@return table
-function M.explain(tbl, main, is_group)
+function M.explain(tbl, main, is_group, nesting)
     fix_language()
     main = main or {}
 
@@ -137,7 +139,8 @@ function M.explain(tbl, main, is_group)
             local node = {
                 value = value .. quantifiers,
                 explanation = expl.explanation,
-                children = expl.children
+                children = expl.children,
+                nesting = nesting or 0
             }
             table.insert(main, node)
         end
@@ -157,14 +160,20 @@ function M.explain(tbl, main, is_group)
             local node = {
                 value = '[' .. value .. ']' .. quantifiers,
                 explanation = 'Match ' .. class_start,
-                children = explain_class(value, quantifiers)
+                children = explain_class(value, quantifiers),
+                nesting = nesting or 0
             }
             table.insert(main, node)
         end
 
         if type == 'group' then
             children[#children].quantifiers = quantifiers
-            main = M.explain(children, main, true)
+            main = M.explain(
+                children,
+                main,
+                true,
+                tonumber(value)
+            )
         end
     end
 
