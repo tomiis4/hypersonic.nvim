@@ -52,27 +52,27 @@ local function get_informations(regex)
     local highlight = {}
 
     local split_tbl, err = Split(regex)
-    -- vim.print(split_tbl)
     local expl_tbl = Explain(split_tbl, {})
-    -- vim.print(expl_tbl)
     local merge_tbl = Merge(expl_tbl, {})
-    -- vim.print(merge_tbl)
 
     local modified = err and { {
         value = err,
         explanation = '',
-        children = {}
+        children = {},
+        nesting = 0
     } } or merge_tbl
 
     -- format 3-dimension table to 1-dimension
     for _, v in pairs(modified) do
-        local value, explanation, children = v.value, v.explanation, v.children
+        local value, explanation = v.value, v.explanation
+        local children, nesting = v.children, v.nesting
 
         local calc_padd = U.get_longest_key(modified) - #value
         local padding = cfg.add_padding and (' '):rep(calc_padd) or ''
+        local nest = (' '):rep(nesting * 2)
         local wrapping = cfg.wrapping
 
-        local key = U.wrap(value, wrapping) .. ': ' .. padding
+        local key = nest .. U.wrap(value, wrapping) .. ': ' .. padding
 
         -- if type(explanation) ~= 'table' then
         table.insert(formatted, key .. explanation)
