@@ -111,16 +111,16 @@ local function get_closing(s, type, idx)
 end
 
 
-local n = 0
 ---split regex to specific table
 ---@param str string
----@param n_group number?
+---@param nesting number?
 ---@return Node[]
 ---@return string
-function S.split_regex(str, n_group)
+function S.split_regex(str, nesting)
     str = fix_language(str)
-    -- n = n_group == nil and 0 or n_group
-    n = n_group or 0
+
+    -- -1 to have 0 as default
+    nesting = nesting or -1
 
     local error = is_error(str)
     if error[1] then
@@ -153,13 +153,11 @@ function S.split_regex(str, n_group)
         elseif char == '(' then
             local close_idx = get_closing(str, '(', i)
             local group_value = str:sub(i + 1, close_idx - 1)
-            n = n + 1
 
             local node = get_node(
                 'group',
-                -- tostring(n),
-                '',
-                S.split_regex(group_value, n)
+                tostring(nesting + 1),
+                S.split_regex(group_value, nesting + 1)
             )
 
             i = close_idx
