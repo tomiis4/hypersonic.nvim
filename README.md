@@ -2,7 +2,7 @@
 
 <p align="center">
     A powerful NeoVim plugin created to increase your regular expression (RegExp) writing and testing experience.
-    Whether you're a newbie or profesional developer, Hypersonic is here to make your life easier and boost your productivity
+    Whether you're a newbie or professional developer, Hypersonic is here to make your life easier and boost your productivity.
 </p>
 
 
@@ -28,8 +28,8 @@
 - Language support for **LUA**, **PHP**
 
 ## Known issues
-- Does not work in v`0.8.3` (only tested one)
-- Nested groups does not display correctly
+- Does not work in `v0.8.3` (only tested one)
+- Nested groups do not display correctly
 - Advanced regex is not working (e.g. `(?:)`)
     - [ ] named capturing group (`(?:<name>)`)
     - [ ] non-capturing group (`(?:)`)
