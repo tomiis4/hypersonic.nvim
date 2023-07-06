@@ -401,7 +401,7 @@ local meta_table = {
             </td>
             <td align="center" valign="top" width="14.28%">
                 <a href="https://github.com/leekool">
-                <img src="https://avatars.githubusercontent.com/u/108952834?v=4" width="50px;" alt="leekool"/><br />
+                <img src="https://avatars.githubusercontent.com/u/88203649?v=4" width="50px;" alt="leekool"/><br />
                 <sub><b> leekool </b></sub><br />
                 <sup> spelling specialist </sup>
                 </a><br/>
