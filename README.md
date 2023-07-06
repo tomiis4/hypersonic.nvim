@@ -399,6 +399,13 @@ local meta_table = {
                 <sup> command-line preview idea </sup>
                 </a><br/>
             </td>
+            <td align="center" valign="top" width="14.28%">
+                <a href="https://github.com/leekool">
+                <img src="https://avatars.githubusercontent.com/u/108952834?v=4" width="50px;" alt="leekool"/><br />
+                <sub><b> leekool </b></sub><br />
+                <sup> spelling specialist </sup>
+                </a><br/>
+            </td>
         </tr>
     </tbody>
 </table>
