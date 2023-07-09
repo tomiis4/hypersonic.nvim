@@ -183,9 +183,13 @@ function M.setup(opts)
                 local cmdline = vim.fn.getcmdline()
                 local cmdtype = vim.fn.getcmdtype()
 
-                if cmdtype == '/' or cmdtype == '?' then
+                local is_empty = cmdline == ''
+
+                if (cmdtype == '/' or cmdtype == '?') and not is_empty then
                     -- stimulating params
                     M.explain({ fargs = { cmdline } })
+                elseif is_empty then
+                    delete_window()
                 end
             end
         })
