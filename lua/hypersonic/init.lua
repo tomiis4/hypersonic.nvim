@@ -45,13 +45,14 @@ local function get_selected()
 end
 
 ---@param regex string
+---@param is_cmdline boolean?
 ---@return table, Highlights
-local function get_informations(regex)
+local function get_informations(regex, is_cmdline)
     local formatted = {}
     ---@type Highlights
     local highlight = {}
 
-    local split_tbl, err = Split(regex)
+    local split_tbl, err = Split(regex, is_cmdline or false)
     local expl_tbl = Explain(split_tbl, {})
     local merge_tbl = Merge(expl_tbl, {})
 
@@ -186,7 +187,7 @@ function M.setup(opts)
                 local is_empty = cmdline == ''
 
                 if (cmdtype == '/' or cmdtype == '?') and not is_empty then
-                    -- stimulating params
+                    -- stimulate params
                     M.explain({ fargs = { cmdline } })
                 elseif is_empty then
                     delete_window()
@@ -205,12 +206,17 @@ end
 ---@param param table
 function M.explain(param)
     local regex_title = param.fargs[1] or get_selected()
+
+    local cmdtype = vim.fn.getcmdtype()
+    local is_cmdsearch = cmdtype == '/' or cmdtype == '?'
+    local is_cmdline = param.fargs[1] ~= nil and is_cmdsearch
+
     if regex_title == nil then
         vim.notify('Please select correct RegExp')
         return
     end
 
-    local content, highlights = get_informations(regex_title)
+    local content, highlights = get_informations(regex_title, is_cmdline)
     local position = param.fargs[1] and 'editor' or 'cursor'
 
     display_window(regex_title, content, highlights, position)

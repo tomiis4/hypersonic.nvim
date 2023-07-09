@@ -113,19 +113,22 @@ end
 
 ---split regex to specific table
 ---@param str string
+---@param is_cmdline boolean
 ---@param nesting number?
 ---@return Node[]
 ---@return string
-function S.split_regex(str, nesting)
+function S.split_regex(str, is_cmdline, nesting)
     str = fix_language(str)
 
     -- -1 to have 0 as default
     nesting = nesting or -1
 
     local error = is_error(str)
-    if error[1] then
+    if error[1] and not is_cmdline then
         str = ''
         return { get_node('', '', {}) }, error[2]
+    else
+        error[2] = nil
     end
 
     ---@type Node[]
@@ -142,7 +145,7 @@ function S.split_regex(str, nesting)
 
             i = i + 1
             table.insert(main, node)
-        elseif char == '[' then
+        elseif char == '[' and not is_cmdline then
             local close_idx = get_closing(str, '[', i)
             local class_value = str:sub(i + 1, close_idx - 1)
 
@@ -150,31 +153,31 @@ function S.split_regex(str, nesting)
 
             i = close_idx
             table.insert(main, node)
-        elseif char == '(' then
+        elseif char == '(' and not is_cmdline then
             local close_idx = get_closing(str, '(', i)
             local group_value = str:sub(i + 1, close_idx - 1)
 
             local node = get_node(
-                'group',
-                tostring(nesting + 1),
-                S.split_regex(group_value, nesting + 1)
-            )
+                    'group',
+                    tostring(nesting + 1),
+                    S.split_regex(group_value, nesting + 1, false)
+                )
 
             i = close_idx
             table.insert(main, node)
-        elseif char == '{' and str:find('%d+,%d*}', i) then
+        elseif char == '{' and str:find('%d+,%d*}', i) and not is_cmdline then
             local close_idx = get_closing(str, '{', i)
             local quantifier_value = str:sub(i + 1, close_idx - 1)
             local min, max = quantifier_value:match("(%d+),(%d*)")
 
             local node = get_node('quantifier', {
-                min = min,
-                max = max == '' and 'inf' or max
-            })
+                    min = min,
+                    max = max == '' and 'inf' or max
+                })
 
             i = close_idx
             table.insert(main, node)
-        elseif U.has_value(T.quantifiers, char) then
+        elseif U.has_value(T.quantifiers, char) and not is_cmdline then
             local prev_node = main[#main]
             prev_node.quantifiers = prev_node.quantifiers .. char
         else

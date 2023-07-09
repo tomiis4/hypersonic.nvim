@@ -9,12 +9,19 @@ local M = {}
 ---@field nesting number
 
 local function fix_language()
-    -- if you are in cmdline don't cound filetype
-    local lang = vim.fn.getcmdpos() ~= 0 and '' or vim.bo.filetype
+    local cmdtype = vim.fn.getcmdtype()
+    local cmdpos = vim.fn.getcmdpos()
+    local is_cmdsearch = cmdtype == '/' or cmdtype == '?'
+
+    -- if you are in cmdline don't count filetype
+    local lang = cmdpos ~= 0 and '' or vim.bo.filetype
 
     if lang == 'lua' then
         U.escaped_char = '%'
         U.meta_table = T.lua_meta_table
+    elseif is_cmdsearch then
+        T.quantifiers = {}
+        T.special_table = {}
     else
         U.escaped_char = '\\'
         U.meta_table = T.php_meta_table
