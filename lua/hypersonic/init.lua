@@ -174,6 +174,7 @@ end
 
 ---@param opts table
 function M.setup(opts)
+    opts = opts or {}
     for k, v in pairs(opts) do
         cfg[k] = v
     end
