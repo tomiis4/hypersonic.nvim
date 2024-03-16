@@ -8,7 +8,7 @@
 
 <hr>
 
-<h3 align="center"> <img src='https://media.discordapp.net/attachments/772927831441014847/1121863260128415825/image.png?width=815&height=458'> </h3>
+<h3 align="center"> <img src='https://cdn.discordapp.com/attachments/892804952664203264/1218597240612978688/image-41.png?ex=66083e1e&is=65f5c91e&hm=ab8892ada196cbe55f71bffeaa5431f5be9f0ee418d65a9064615a0d4b57c5e9&'> </h3>
 <h6 align="center"> Colorscheme: Rose-Pine; Font: JetBrainsMono NF </h6>
 
 <hr>
@@ -40,19 +40,19 @@
     - select RegExp then enter command `:Hypersonic`
     - <details>
         <summary> preview </summary>
-        <img src='https://media.discordapp.net/attachments/772927831441014847/1121863260128415825/image.png?width=815&height=458'>
+        <img src='https://cdn.discordapp.com/attachments/892804952664203264/1218597240612978688/image-41.png?ex=66083e1e&is=65f5c91e&hm=ab8892ada196cbe55f71bffeaa5431f5be9f0ee418d65a9064615a0d4b57c5e9&'>
     </details>
 2. command
     - enter command: `:Hypersonic your-regex`
     - <details>
         <summary> preview </summary>
-        <img src='https://media.discordapp.net/attachments/772927831441014847/1121863260451393576/image.png?width=815&height=458'>
+        <img src='https://cdn.discordapp.com/attachments/892804952664203264/1218597241024024586/image-35.png?ex=66083e1e&is=65f5c91e&hm=60ea998aa6138c649416f977a78a5af5b47bc53288a3ef797ba52f68710041e7&'>
     </details>
 3. command-line search
     - in cmd search `/your-regex` or `?your-regex`
     - <details>
         <summary> preview </summary>
-        <img src='https://media.discordapp.net/attachments/772927831441014847/1121863260736585729/image.png?width=815&height=458'>
+        <img src='https://cdn.discordapp.com/attachments/892804952664203264/1218597241434935377/image-45.png?ex=66083e1e&is=65f5c91e&hm=d18c73feaa59e50d2d6d4efbb8e7e7d9465181cbe4306eee30ad0f4943f95567&'>
     </details>
 
 ## Installation
