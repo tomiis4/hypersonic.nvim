@@ -40,7 +40,7 @@
     - select RegExp then enter command `:Hypersonic`
     - <details>
         <summary> preview </summary>
-        <img src='https://cdn.discordapp.com/attachments/892804952664203264/1218597240612978688/image-41.png?ex=66083e1e&is=65f5c91e&hm=ab8892ada196cbe55f71bffeaa5431f5be9f0ee418d65a9064615a0d4b57c5e9&'>
+        <img src='https://cdn.discordapp.com/attachments/892804952664203264/1218597241434935377/image-45.png?ex=66083e1e&is=65f5c91e&hm=d18c73feaa59e50d2d6d4efbb8e7e7d9465181cbe4306eee30ad0f4943f95567&'>
     </details>
 2. command
     - enter command: `:Hypersonic your-regex`
@@ -52,7 +52,7 @@
     - in cmd search `/your-regex` or `?your-regex`
     - <details>
         <summary> preview </summary>
-        <img src='https://cdn.discordapp.com/attachments/892804952664203264/1218597241434935377/image-45.png?ex=66083e1e&is=65f5c91e&hm=d18c73feaa59e50d2d6d4efbb8e7e7d9465181cbe4306eee30ad0f4943f95567&'>
+        <img src='https://cdn.discordapp.com/attachments/892804952664203264/1218597240612978688/image-41.png?ex=66083e1e&is=65f5c91e&hm=ab8892ada196cbe55f71bffeaa5431f5be9f0ee418d65a9064615a0d4b57c5e9&'>
     </details>
 
 ## Installation
